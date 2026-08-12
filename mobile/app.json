@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Polley Driver",
+    "slug": "polley-driver",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "polleydriver",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Polley Enterprise uses your location while a shift is active to update shipment tracking."
+      }
+    },
+    "android": {
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+    },
+    "plugins": ["expo-router", "expo-location"]
+  }
+}
