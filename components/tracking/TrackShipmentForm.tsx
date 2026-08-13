@@ -5,72 +5,43 @@ import { AlertCircle, CheckCircle2, Loader2, MapPin, PackageSearch, RefreshCw } 
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { formatDateTime, formatTrackingNumber, serviceTypeLabels, shipmentStatusLabels } from "@/lib/tracking";
-import { getSupabaseBrowserClient, hasSupabaseConfig } from "@/lib/supabase/client";
-import type { ServiceType, ShipmentStatus } from "@/lib/supabase/types";
-
-type TrackingResponse = {
-  id: string;
-  tracking_number: string;
-  service_type: ServiceType;
-  status: ShipmentStatus;
-  pickup_city: string;
-  pickup_state: string;
-  dropoff_city: string;
-  dropoff_state: string;
-  scheduled_for: string | null;
-  public_notes: string | null;
-  updated_at: string;
-  latest_event_title: string | null;
-  latest_event_message: string | null;
-  latest_event_at: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  location_recorded_at: string | null;
-};
+import { ApiError, trackShipment } from "@/lib/api";
+import type { TrackingResult } from "@/lib/types";
 
 export function TrackShipmentForm() {
   const [trackingNumber, setTrackingNumber] = useState("");
-  const [result, setResult] = useState<TrackingResponse | null>(null);
+  const [result, setResult] = useState<TrackingResult | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const isConfigured = hasSupabaseConfig();
 
-  async function loadShipment(rawTrackingNumber = trackingNumber) {
+  async function loadShipment(rawTrackingNumber = trackingNumber, quiet = false) {
     const formattedTrackingNumber = formatTrackingNumber(rawTrackingNumber);
     if (!formattedTrackingNumber) {
       setError("Enter a tracking number to continue.");
       return;
     }
 
-    if (!isConfigured) {
-      setError("Tracking is ready, but Supabase keys still need to be added in Netlify.");
-      return;
-    }
-
-    setIsLoading(true);
+    if (!quiet) setIsLoading(true);
     setError("");
 
     try {
-      const supabase = getSupabaseBrowserClient();
-      const { data, error: requestError } = await supabase.rpc("track_shipment", {
-        search_tracking_number: formattedTrackingNumber,
-      });
-
-      if (requestError) throw requestError;
-
-      const shipment = Array.isArray(data) ? (data[0] as TrackingResponse | undefined) : undefined;
-      if (!shipment) {
-        setResult(null);
-        setError("We could not find that tracking number. Please check it and try again.");
-        return;
-      }
-
+      const response = await trackShipment(formattedTrackingNumber);
       setTrackingNumber(formattedTrackingNumber);
-      setResult(shipment);
-    } catch {
-      setError("Tracking is unavailable right now. Please call Polley Enterprise for help.");
+      setResult({
+        shipment: response.shipment,
+        events: response.events,
+        location: response.location,
+      });
+    } catch (trackError) {
+      if (trackError instanceof ApiError && trackError.status !== 0) {
+        // Keep any shipment already on screen when a refresh fails.
+        if (!quiet) setResult(null);
+        setError(trackError.message);
+      } else if (!quiet) {
+        setError("Tracking is unavailable right now. Please call Polley Enterprise for help.");
+      }
     } finally {
-      setIsLoading(false);
+      if (!quiet) setIsLoading(false);
     }
   }
 
@@ -79,25 +50,30 @@ export function TrackShipmentForm() {
     void loadShipment();
   }
 
+  const activeTrackingNumber = result?.shipment.tracking_number;
+
   useEffect(() => {
-    if (!result) return;
+    if (!activeTrackingNumber) return;
 
     const interval = window.setInterval(() => {
-      void loadShipment(result.tracking_number);
+      void loadShipment(activeTrackingNumber, true);
     }, 30000);
 
     return () => window.clearInterval(interval);
     // Refreshes the currently viewed tracking number without restarting on every input change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [result?.tracking_number]);
+  }, [activeTrackingNumber]);
+
+  const shipment = result?.shipment;
+  const latestEvent = result?.events[0];
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
       <form onSubmit={onSubmit} className="section-shell h-fit p-6 md:p-8">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-enterprise-blue/10 text-enterprise-blue">
+        <div className="flex h-12 w-12 items-center justify-center rounded-sharp bg-enterprise-blue/10 text-enterprise-blue">
           <PackageSearch className="h-6 w-6" />
         </div>
-        <h2 className="mt-5 text-3xl font-bold tracking-tight text-enterprise-charcoal">
+        <h2 className="font-display mt-5 text-3xl font-bold uppercase tracking-[0.01em] text-enterprise-charcoal">
           Enter your tracking number
         </h2>
         <p className="mt-3 text-enterprise-gray">
@@ -114,12 +90,12 @@ export function TrackShipmentForm() {
           />
         </div>
         {error ? (
-          <p className="mt-4 flex gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">
+          <p className="mt-4 flex gap-2 rounded-sharp border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             {error}
           </p>
         ) : null}
-        <Button type="submit" className="mt-6 w-full rounded-2xl" disabled={isLoading}>
+        <Button type="submit" className="mt-6 w-full rounded-sharp" disabled={isLoading}>
           {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
           Track Shipment
         </Button>
@@ -129,23 +105,23 @@ export function TrackShipmentForm() {
       </form>
 
       <div className="section-shell min-h-[28rem] p-6 md:p-8">
-        {result ? (
+        {shipment ? (
           <div>
             <div className="flex flex-col gap-4 border-b border-enterprise-border pb-6 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.16em] text-enterprise-blue">
-                  {result.tracking_number}
+                  {shipment.tracking_number}
                 </p>
-                <h3 className="mt-2 text-3xl font-bold text-enterprise-charcoal">
-                  {shipmentStatusLabels[result.status]}
+                <h3 className="font-display mt-2 text-3xl font-bold uppercase tracking-[0.01em] text-enterprise-charcoal">
+                  {shipmentStatusLabels[shipment.status]}
                 </h3>
-                <p className="mt-2 text-enterprise-gray">{serviceTypeLabels[result.service_type]}</p>
+                <p className="mt-2 text-enterprise-gray">{serviceTypeLabels[shipment.service_type]}</p>
               </div>
               <Button
                 type="button"
                 variant="secondary"
-                className="rounded-2xl px-4 py-3 text-sm"
-                onClick={() => void loadShipment(result.tracking_number)}
+                className="rounded-sharp px-4 py-3 text-sm"
+                onClick={() => void loadShipment(shipment.tracking_number)}
                 disabled={isLoading}
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
@@ -154,46 +130,66 @@ export function TrackShipmentForm() {
             </div>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <InfoCard label="Pickup" value={`${result.pickup_city}, ${result.pickup_state}`} />
-              <InfoCard label="Dropoff" value={`${result.dropoff_city}, ${result.dropoff_state}`} />
-              <InfoCard label="Scheduled" value={formatDateTime(result.scheduled_for)} />
-              <InfoCard label="Last updated" value={formatDateTime(result.updated_at)} />
+              <InfoCard label="Pickup" value={`${shipment.pickup_city}, ${shipment.pickup_state}`} />
+              <InfoCard label="Dropoff" value={`${shipment.dropoff_city}, ${shipment.dropoff_state}`} />
+              <InfoCard label="Scheduled" value={formatDateTime(shipment.scheduled_for)} />
+              <InfoCard label="Last updated" value={formatDateTime(shipment.updated_at)} />
             </div>
 
-            <div className="mt-6 rounded-3xl border border-enterprise-border bg-enterprise-light/70 p-5">
+            <div className="mt-6 rounded-card border border-enterprise-border bg-enterprise-light/70 p-5">
               <div className="flex gap-3">
                 <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-enterprise-blue" />
                 <div>
                   <h4 className="font-bold text-enterprise-charcoal">
-                    {result.latest_event_title ?? "Shipment is being monitored"}
+                    {latestEvent?.title ?? "Shipment is being monitored"}
                   </h4>
                   <p className="mt-2 text-sm leading-relaxed text-enterprise-gray">
-                    {result.latest_event_message ??
-                      result.public_notes ??
+                    {latestEvent?.message ??
+                      shipment.public_notes ??
                       "Check back here for updates as the shipment moves forward."}
                   </p>
-                  {result.latest_event_at ? (
+                  {latestEvent ? (
                     <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-enterprise-blue">
-                      {formatDateTime(result.latest_event_at)}
+                      {formatDateTime(latestEvent.created_at)}
                     </p>
                   ) : null}
                 </div>
               </div>
             </div>
 
-            {result.latitude && result.longitude ? (
+            {result && result.events.length > 1 ? (
+              <div className="mt-6">
+                <h4 className="text-xs font-bold uppercase tracking-[0.14em] text-enterprise-blue">
+                  Shipment history
+                </h4>
+                <ol className="mt-4 space-y-3 border-l border-enterprise-border pl-5">
+                  {result.events.slice(1).map((event, index) => (
+                    <li key={`${event.created_at}-${index}`} className="relative">
+                      <span className="absolute -left-[1.44rem] top-2 h-2 w-2 rounded-full bg-enterprise-blue/50" />
+                      <p className="font-semibold text-enterprise-charcoal">{event.title}</p>
+                      {event.message ? (
+                        <p className="mt-1 text-sm text-enterprise-gray">{event.message}</p>
+                      ) : null}
+                      <p className="mt-1 text-xs text-enterprise-gray">{formatDateTime(event.created_at)}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ) : null}
+
+            {result?.location ? (
               <a
-                href={`https://www.google.com/maps/search/?api=1&query=${result.latitude},${result.longitude}`}
+                href={`https://www.google.com/maps/search/?api=1&query=${result.location.latitude},${result.location.longitude}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-6 flex items-center justify-between gap-4 rounded-3xl border border-enterprise-border bg-white p-5 shadow-sm transition hover:border-enterprise-blue"
+                className="mt-6 flex items-center justify-between gap-4 rounded-card border border-enterprise-border bg-white p-5 transition hover:border-enterprise-blue"
               >
                 <span className="flex gap-3">
                   <MapPin className="mt-1 h-5 w-5 shrink-0 text-enterprise-blue" />
                   <span>
                     <span className="block font-bold text-enterprise-charcoal">Last known location</span>
                     <span className="mt-1 block text-sm text-enterprise-gray">
-                      Updated {formatDateTime(result.location_recorded_at)}
+                      Updated {formatDateTime(result.location.recorded_at)}
                     </span>
                   </span>
                 </span>
@@ -203,10 +199,10 @@ export function TrackShipmentForm() {
           </div>
         ) : (
           <div className="flex min-h-[24rem] flex-col items-center justify-center text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-enterprise-blue/10 text-enterprise-blue">
+            <div className="flex h-16 w-16 items-center justify-center rounded-card bg-enterprise-blue/10 text-enterprise-blue">
               <MapPin className="h-8 w-8" />
             </div>
-            <h3 className="mt-5 text-2xl font-bold text-enterprise-charcoal">Shipment details appear here</h3>
+            <h3 className="font-display mt-5 text-2xl font-bold uppercase tracking-[0.01em] text-enterprise-charcoal">Shipment details appear here</h3>
             <p className="mt-3 max-w-md text-enterprise-gray">
               Customers can check shipment status, route progress, and the latest public update from the Polley Enterprise team.
             </p>
@@ -219,7 +215,7 @@ export function TrackShipmentForm() {
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-enterprise-border bg-white p-4">
+    <div className="rounded-sharp border border-enterprise-border bg-white p-4">
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-enterprise-blue">{label}</p>
       <p className="mt-2 font-semibold text-enterprise-charcoal">{value}</p>
     </div>

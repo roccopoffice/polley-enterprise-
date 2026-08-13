@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "polley-enterprise",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    // Built by `npm run build` (Next.js static export).
+    "directory": "./out",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "polley-enterprise",
+      "database_id": "813207c5-1d83-42c8-8b9f-326110fc6bfd"
+    }
+  ],
+  "vars": {
+    "SESSION_HOURS": "12"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

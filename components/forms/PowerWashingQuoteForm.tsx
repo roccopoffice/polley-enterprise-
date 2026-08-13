@@ -9,6 +9,7 @@ import { Input } from "@/components/Input";
 import { Textarea } from "@/components/Textarea";
 import { Select } from "@/components/Select";
 import { Button } from "@/components/Button";
+import { submitForm } from "@/lib/api";
 import { FileUpload } from "@/components/FileUpload";
 
 const serviceOptions = [
@@ -54,27 +55,19 @@ export function PowerWashingQuoteForm() {
   const onSubmit = async (values: PowerWashingQuoteInput) => {
     setServerState(null);
     try {
-      const netlifyFormName = "power-washing-quote-form";
-      const body = new URLSearchParams({
-        "form-name": netlifyFormName,
+      await submitForm({
+        form: "power-washing",
         fullName: values.fullName,
         email: values.email,
-        phoneNumber: values.phoneNumber,
-        propertyAddress: values.propertyAddress,
-        serviceType: values.serviceType,
-        description: values.description,
-        preferredServiceDate: values.preferredServiceDate || "",
+        phone: values.phoneNumber,
+        inquiryType: `Power Washing — ${values.serviceType}`,
+        location: values.propertyAddress,
+        preferredDate: values.preferredServiceDate || "",
+        details: values.description,
         uploadedPhotos: photoName || "",
         companyWebsite: values.companyWebsite || "",
-        submittedAt: String(startedAtRef.current),
+        submittedAt: startedAtRef.current,
       });
-
-      const response = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
-      });
-      if (!response.ok) throw new Error("Unable to send quote request.");
 
       reset();
       setPhotoName("");
@@ -95,26 +88,9 @@ export function PowerWashingQuoteForm() {
   return (
     <>
       <form
-        name="power-washing-quote-form"
-        data-netlify="true"
-        data-netlify-honeypot="companyWebsite"
-        hidden
-      >
-        <input type="text" name="fullName" />
-        <input type="email" name="email" />
-        <input type="tel" name="phoneNumber" />
-        <input type="text" name="propertyAddress" />
-        <input type="text" name="serviceType" />
-        <textarea name="description" />
-        <input type="text" name="preferredServiceDate" />
-        <input type="text" name="uploadedPhotos" />
-        <input type="text" name="companyWebsite" />
-        <input type="text" name="submittedAt" />
-      </form>
-      <form
         id={formId}
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 rounded-3xl border border-enterprise-border bg-white p-6 shadow-card md:p-8"
+        className="space-y-4 rounded-card border border-enterprise-border bg-white p-6 shadow-card md:p-8"
         noValidate
       >
       <Input id="pwFullName" label="Full Name" error={errors.fullName?.message} {...register("fullName")} />

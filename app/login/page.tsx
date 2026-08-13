@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SectionHeader } from "@/components/SectionHeader";
+import { PageHero } from "@/components/PageHero";
 import { LoginForm } from "@/components/tracking/LoginForm";
 
 export const metadata: Metadata = {
@@ -10,18 +10,13 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <>
-      <section className="page-top pb-12">
-        <div className="mx-auto max-w-6xl px-4">
-          <SectionHeader
-            eyebrow="Employees"
-            title="Dispatch and shipment access"
-            description="Secure access for Polley Enterprise employees and dispatch users."
-            align="center"
-          />
-        </div>
-      </section>
-      <section className="pb-28">
-        <div className="mx-auto max-w-6xl px-4">
+      <PageHero
+        eyebrow="Employees"
+        title="Dispatch and shipment access"
+        description="Secure access for Polley Enterprise employees and dispatch users."
+      />
+      <section className="section-pad bg-enterprise-canvas">
+        <div className="container-enterprise max-w-5xl">
           <LoginForm />
         </div>
       </section>

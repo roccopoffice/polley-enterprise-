@@ -8,6 +8,7 @@ import { Input } from "@/components/Input";
 import { Select } from "@/components/Select";
 import { Textarea } from "@/components/Textarea";
 import { Button } from "@/components/Button";
+import { ApiError, submitForm } from "@/lib/api";
 
 const unifiedQuoteSchema = z.object({
   fullName: z.string().min(2, "Name is required"),
@@ -66,9 +67,8 @@ export function UnifiedQuoteForm() {
   const onSubmit = async (values: UnifiedQuoteInput) => {
     setServerState(null);
     try {
-      const formName = "unified-quote-form";
-      const body = new URLSearchParams({
-        "form-name": formName,
+      await submitForm({
+        form: "quote",
         fullName: values.fullName,
         email: values.email,
         phone: values.phone,
@@ -77,18 +77,8 @@ export function UnifiedQuoteForm() {
         preferredDate: values.preferredDate || "",
         details: values.details,
         companyWebsite: values.companyWebsite || "",
-        submittedAt: String(startedAtRef.current),
+        submittedAt: startedAtRef.current,
       });
-
-      const response = await fetch("/quotes/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Unable to submit (${response.status}).`);
-      }
 
       reset();
       startedAtRef.current = Date.now();
@@ -96,12 +86,12 @@ export function UnifiedQuoteForm() {
         type: "success",
         message: "Thanks. Your request is in. We will reach out soon.",
       });
-    } catch {
+    } catch (submitError) {
       setServerState({
         type: "error",
         message:
-          typeof window !== "undefined" && window.location.hostname === "localhost"
-            ? "Forms work on the live Netlify site after deploy."
+          submitError instanceof ApiError && submitError.status === 400
+            ? submitError.message
             : "Could not submit right now. Please call (832) 960-4471.",
       });
     }
@@ -181,7 +171,7 @@ export function UnifiedQuoteForm() {
         <input type="text" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" {...register("companyWebsite")} />
 
         <div className="mt-5">
-          <Button type="submit" disabled={isSubmitting} className="w-full rounded-2xl py-3.5 text-base">
+          <Button type="submit" disabled={isSubmitting} className="w-full rounded-sharp py-3.5 text-base">
             {isSubmitting ? "Sending..." : "Send Request"}
           </Button>
         </div>

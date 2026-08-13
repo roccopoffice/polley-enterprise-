@@ -7,23 +7,29 @@
     "build": "next build",
     "export": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "npm run build && wrangler deploy",
+    "cf:types": "wrangler types",
+    "db:apply": "wrangler d1 execute polley-enterprise --remote --file db/schema.sql",
+    "db:apply:local": "wrangler d1 execute polley-enterprise --local --file db/schema.sql",
+    "db:seed": "wrangler d1 execute polley-enterprise --remote --file db/seed.sql",
+    "users:create": "node scripts/create-user.mjs",
+    "api:test": "node scripts/api-test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^11.11.17",
     "lucide-react": "^0.453.0",
     "next": "^15.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.1",
-    "resend": "^4.0.0",
-    "@supabase/supabase-js": "^2.50.0",
     "tailwind-merge": "^2.5.4",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260812.1",
     "@types/node": "^22.8.7",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
@@ -32,6 +38,11 @@
     "eslint-config-next": "^15.0.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "wrangler": "^4.122.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260811.1": true
   }
 }

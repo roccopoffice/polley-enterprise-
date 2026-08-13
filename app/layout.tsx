@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { Inter, Sora } from "next/font/google";
+import { Barlow_Condensed, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MobileActionBar } from "@/components/MobileActionBar";
 
-const inter = Inter({
+const sourceSans = Source_Sans_3({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-body",
 });
 
-const sora = Sora({
+const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  variable: "--font-sora",
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-display",
 });
 
 export const viewport = {
@@ -52,17 +53,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} ${sora.variable} font-sans antialiased`}>
+      <body className={`${sourceSans.variable} ${barlowCondensed.variable} font-body antialiased`}>
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-enterprise-navy"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-sharp focus:bg-white focus:px-4 focus:py-2 focus:text-enterprise-navy"
         >
           Skip to content
         </a>
         <Header />
         <main
           id="main-content"
-          className="min-h-screen bg-white pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-0"
+          className="min-h-screen bg-enterprise-canvas pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0"
         >
           {children}
         </main>

@@ -8,6 +8,7 @@ import { contactFormSchema, type ContactFormInput } from "@/lib/validation";
 import { Input } from "@/components/Input";
 import { Textarea } from "@/components/Textarea";
 import { Button } from "@/components/Button";
+import { submitForm } from "@/lib/api";
 
 export function ContactForm() {
   const formId = useId().replace(/:/g, "");
@@ -37,26 +38,16 @@ export function ContactForm() {
   const onSubmit = async (values: ContactFormInput) => {
     setServerState(null);
     try {
-      const netlifyFormName = "contact-form";
-      const body = new URLSearchParams({
-        "form-name": netlifyFormName,
-        name: values.name,
+      await submitForm({
+        form: "contact",
+        fullName: values.name,
         email: values.email,
         phone: values.phone || "",
-        subject: values.subject,
-        message: values.message,
+        inquiryType: values.subject,
+        details: values.message,
         companyWebsite: values.companyWebsite || "",
-        submittedAt: String(startedAtRef.current),
+        submittedAt: startedAtRef.current,
       });
-
-      const response = await fetch("/contact/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
-      });
-      if (!response.ok) {
-        throw new Error("Unable to send message.");
-      }
 
       reset();
       startedAtRef.current = Date.now();
@@ -76,7 +67,7 @@ export function ContactForm() {
     <>
       <form
         id={formId}
-        className="space-y-4 rounded-3xl border border-enterprise-border bg-white p-6 shadow-card md:p-8"
+        className="space-y-4 rounded-card border border-enterprise-border bg-white p-6 shadow-card md:p-8"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >

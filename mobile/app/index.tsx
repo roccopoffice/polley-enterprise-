@@ -12,13 +12,26 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import type { LocationSubscription } from "expo-location";
-import { hasSupabaseConfig, supabase } from "../lib/supabase";
+import {
+  ApiError,
+  endShift as endShiftRequest,
+  fetchSession,
+  fetchShipments,
+  getToken,
+  hasApiConfig,
+  login as loginRequest,
+  logout as logoutRequest,
+  sendLocation,
+  startShift as startShiftRequest,
+  updateStatus as updateStatusRequest,
+} from "../lib/api";
 import { driverStatuses, Shipment, ShipmentStatus, statusLabels } from "../lib/tracking";
 
 export default function DriverApp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userId, setUserId] = useState("");
+  const [driverName, setDriverName] = useState("");
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [selectedShipmentId, setSelectedShipmentId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -40,57 +53,77 @@ export default function DriverApp() {
     };
   }, []);
 
+  function report(error: unknown, fallback: string) {
+    if (error instanceof ApiError && error.status === 401) {
+      stopTracking();
+      setIsSignedIn(false);
+      setMessage("Your session expired. Please sign in again.");
+      return;
+    }
+    setMessage(error instanceof ApiError ? error.message : fallback);
+  }
+
   async function boot() {
-    if (!hasSupabaseConfig()) {
-      setMessage("Add Expo Supabase environment keys before using the driver app.");
+    if (!hasApiConfig()) {
+      setMessage("Set EXPO_PUBLIC_API_URL in mobile/.env before using the driver app.");
       setIsLoading(false);
       return;
     }
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
-      setUserId(user.id);
-      await loadShipments(user.id);
+    try {
+      const token = await getToken();
+      if (token) {
+        const { user } = await fetchSession();
+        setDriverName(user.full_name);
+        setIsSignedIn(true);
+        await loadShipments();
+      }
+    } catch (error) {
+      if (!(error instanceof ApiError && error.status === 401)) {
+        report(error, "Could not reach the dispatch server.");
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   async function login() {
     setIsSaving(true);
     setMessage("");
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error || !data.user) {
-      setMessage("Login failed. Check your employee email and password.");
-      setIsSaving(false);
-      return;
-    }
 
-    setUserId(data.user.id);
-    await loadShipments(data.user.id);
-    setIsSaving(false);
+    try {
+      const user = await loginRequest(email.trim(), password);
+      setDriverName(user.full_name);
+      setIsSignedIn(true);
+      setPassword("");
+      await loadShipments();
+    } catch (error) {
+      setMessage(
+        error instanceof ApiError ? error.message : "Login failed. Check your email and password."
+      );
+    } finally {
+      setIsSaving(false);
+    }
   }
 
-  async function loadShipments(employeeId = userId) {
-    const { data, error } = await supabase
-      .from("shipments")
-      .select("*")
-      .eq("assigned_employee_id", employeeId)
-      .order("updated_at", { ascending: false });
-
-    if (error) {
-      setMessage("Could not load assigned shipments.");
-      return;
+  async function loadShipments() {
+    try {
+      const { shipments: assigned } = await fetchShipments();
+      setShipments(assigned);
+      setSelectedShipmentId((current) => current || assigned[0]?.id || "");
+    } catch (error) {
+      report(error, "Could not load assigned shipments.");
     }
+  }
 
-    const assignedShipments = (data ?? []) as Shipment[];
-    setShipments(assignedShipments);
-    setSelectedShipmentId((current) => current || assignedShipments[0]?.id || "");
+  function stopTracking() {
+    watchRef.current?.remove();
+    watchRef.current = null;
+    setIsTracking(false);
   }
 
   async function startShift() {
-    if (!selectedShipment || !userId) return;
+    if (!selectedShipment) return;
 
     const permission = await Location.requestForegroundPermissionsAsync();
     if (permission.status !== "granted") {
@@ -99,78 +132,83 @@ export default function DriverApp() {
     }
 
     setIsSaving(true);
-    await supabase.from("shift_sessions").insert({
-      shipment_id: selectedShipment.id,
-      employee_id: userId,
-      is_active: true,
-    });
-    await updateStatus("shift_started", "Driver started the shift");
+    setMessage("");
+    const shipmentId = selectedShipment.id;
 
-    watchRef.current?.remove();
-    watchRef.current = await Location.watchPositionAsync(
-      {
-        accuracy: Location.Accuracy.High,
-        timeInterval: 15000,
-        distanceInterval: 25,
-      },
-      async (position) => {
-        await supabase.from("location_pings").insert({
-          shipment_id: selectedShipment.id,
-          employee_id: userId,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          speed: position.coords.speed,
-          heading: position.coords.heading,
-        });
-      }
-    );
+    try {
+      await startShiftRequest(shipmentId);
 
-    setIsTracking(true);
-    setMessage("Shift started. GPS tracking is active while this app stays open.");
-    setIsSaving(false);
+      watchRef.current?.remove();
+      watchRef.current = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 15000,
+          distanceInterval: 25,
+        },
+        (position) => {
+          void sendLocation(shipmentId, {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            speed: position.coords.speed,
+            heading: position.coords.heading,
+          }).catch(() => {
+            // A dropped ping is not worth interrupting the driver; the next one
+            // goes out in a few seconds.
+          });
+        }
+      );
+
+      setIsTracking(true);
+      setMessage("Shift started. GPS tracking is active while this app stays open.");
+      await loadShipments();
+    } catch (error) {
+      stopTracking();
+      report(error, "Could not start the shift.");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   async function stopShift() {
-    if (!selectedShipment || !userId) return;
+    if (!selectedShipment) return;
 
     setIsSaving(true);
-    watchRef.current?.remove();
-    watchRef.current = null;
-    await supabase
-      .from("shift_sessions")
-      .update({ is_active: false, ended_at: new Date().toISOString() })
-      .eq("shipment_id", selectedShipment.id)
-      .eq("employee_id", userId)
-      .eq("is_active", true);
-    setIsTracking(false);
-    setMessage("Shift stopped. GPS tracking is off.");
-    setIsSaving(false);
+    stopTracking();
+
+    try {
+      await endShiftRequest(selectedShipment.id);
+      setMessage("Shift stopped. GPS tracking is off.");
+      await loadShipments();
+    } catch (error) {
+      report(error, "Could not end the shift.");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
-  async function updateStatus(status: ShipmentStatus, title?: string) {
-    if (!selectedShipment || !userId) return;
+  async function updateStatus(status: ShipmentStatus) {
+    if (!selectedShipment) return;
 
     setIsSaving(true);
-    await supabase.from("shipments").update({ status }).eq("id", selectedShipment.id);
-    await supabase.from("shipment_events").insert({
-      shipment_id: selectedShipment.id,
-      actor_id: userId,
-      status,
-      title: title ?? statusLabels[status],
-      message: null,
-    });
-    await loadShipments();
-    setMessage(`${statusLabels[status]} saved.`);
-    setIsSaving(false);
+    try {
+      await updateStatusRequest(selectedShipment.id, status);
+      setMessage(`${statusLabels[status]} saved.`);
+      await loadShipments();
+    } catch (error) {
+      report(error, "Could not save the status update.");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   async function logout() {
-    watchRef.current?.remove();
-    await supabase.auth.signOut();
-    setUserId("");
+    stopTracking();
+    await logoutRequest().catch(() => undefined);
+    setIsSignedIn(false);
+    setDriverName("");
     setShipments([]);
     setSelectedShipmentId("");
-    setIsTracking(false);
+    setMessage("");
   }
 
   if (isLoading) {
@@ -182,7 +220,7 @@ export default function DriverApp() {
     );
   }
 
-  if (!userId) {
+  if (!isSignedIn) {
     return (
       <SafeAreaView style={styles.screen}>
         <View style={styles.card}>
@@ -216,7 +254,7 @@ export default function DriverApp() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.eyebrow}>Driver App</Text>
+            <Text style={styles.eyebrow}>{driverName || "Driver App"}</Text>
             <Text style={styles.title}>Assigned Shipments</Text>
           </View>
           <Pressable onPress={logout}>

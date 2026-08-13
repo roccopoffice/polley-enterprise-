@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, Phone, X } from "lucide-react";
-import { Button } from "@/components/Button";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -20,7 +19,7 @@ export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const isHomeTop = pathname === "/" && !isScrolled;
+  const isHomeTop = pathname === "/" && !isScrolled && !open;
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 10);
@@ -46,136 +45,143 @@ export function Header() {
     };
   }, [open]);
 
+  const isActive = (href: string) =>
+    pathname === href || (href !== "/" && !href.startsWith("/#") && pathname.startsWith(href));
+
   return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all",
-        isScrolled ? "pt-2 sm:pt-3" : "pt-3 sm:pt-4"
-      )}
-    >
-      <div
+    <>
+      <header
         className={cn(
-          "mx-3 flex max-w-7xl items-center justify-between rounded-2xl px-3 py-2.5 transition-all sm:mx-4 sm:px-4 sm:py-3.5 xl:mx-auto",
-          isHomeTop
-            ? "bg-transparent"
-            : "glass-panel shadow-[0_10px_28px_rgba(11,42,91,0.12)]"
+          "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300",
+          isHomeTop ? "border-white/15 bg-transparent" : "border-white/12 bg-enterprise-navy"
         )}
       >
-        <Link href="/" className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-          <span
-            className={cn(
-              "relative h-9 w-9 shrink-0 overflow-hidden rounded-lg sm:h-12 sm:w-12",
-              isHomeTop
-                ? "border border-white/20 bg-white/10 backdrop-blur-sm"
-                : "border border-enterprise-border bg-white"
-            )}
-          >
-            <Image
-              src="/images/logo-square.png"
-              alt="Polley Enterprise logo"
-              fill
-              sizes="48px"
-              className="object-contain"
-              priority
-            />
-          </span>
-          <span
-            className={cn(
-              "truncate text-sm font-bold tracking-tight sm:text-xl",
-              isHomeTop ? "text-white" : "text-enterprise-navy"
-            )}
-          >
-            Polley Enterprise
-          </span>
-        </Link>
-        <nav className="hidden items-center gap-8 lg:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "text-sm font-medium uppercase tracking-[0.11em] transition",
-                pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
-                  ? isHomeTop
-                    ? "text-white"
-                    : "text-enterprise-blue"
-                  : isHomeTop
-                    ? "text-white/85 hover:text-white"
-                    : "text-enterprise-charcoal hover:text-enterprise-blue"
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <div className="container-enterprise flex items-center justify-between py-4">
           <Link
-            href="tel:18329604471"
-            className={cn("text-sm font-semibold", isHomeTop ? "text-white" : "text-enterprise-navy")}
+            href="/"
+            className="inline-flex rounded-sharp focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-enterprise-bright"
           >
-            (832) 960-4471
+            <span className="inline-flex items-center gap-3">
+              <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-sharp border border-white/20 sm:h-11 sm:w-11">
+                <Image
+                  src="/images/logo-square.png"
+                  alt="Polley Enterprise logo"
+                  fill
+                  sizes="44px"
+                  className="object-cover"
+                  priority
+                />
+              </span>
+              <span className="min-w-0 leading-tight">
+                <span className="font-display block text-base font-extrabold uppercase tracking-tight text-white sm:text-lg">
+                  Polley Enterprise
+                </span>
+                <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.16em] text-white/75 sm:text-[10px]">
+                  Transportation &amp; Logistics
+                </span>
+              </span>
+            </span>
           </Link>
-          <Link href="/quotes">
-            <Button className="px-5 py-2.5">Request a Quote</Button>
-          </Link>
-        </nav>
-        <button
-          type="button"
-          className={cn(
-            "rounded-lg border p-2 shadow-sm lg:hidden",
-            isHomeTop
-              ? "border-white/30 bg-white/15 text-white backdrop-blur-sm"
-              : "border-enterprise-border bg-white/90 text-enterprise-charcoal"
-          )}
-          onClick={() => setOpen((value) => !value)}
-          aria-expanded={open}
-          aria-controls="mobile-menu"
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-      {open ? (
-        <>
-          <button
-            type="button"
-            className="fixed inset-0 z-40 bg-black/40 lg:hidden"
-            aria-label="Close menu"
-            onClick={() => setOpen(false)}
-          />
-          <div
-            id="mobile-menu"
-            className="relative z-50 mx-3 mt-2 rounded-2xl border border-enterprise-border bg-white px-4 pb-5 pt-3 shadow-[0_14px_32px_rgba(11,79,156,0.18)] sm:mx-4 lg:hidden"
-          >
-            <div className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "rounded-xl px-3 py-3 text-base font-medium",
-                    pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
-                      ? "bg-enterprise-light text-enterprise-blue"
-                      : "text-enterprise-charcoal hover:bg-enterprise-light"
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
+          <nav className="hidden items-center gap-8 xl:flex" aria-label="Primary">
+            {navLinks.map((link) => (
               <Link
-                href="tel:18329604471"
-                onClick={() => setOpen(false)}
-                className="mt-2 flex items-center gap-2 rounded-xl border border-enterprise-border px-3 py-3 text-base font-semibold text-enterprise-navy"
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "border-b py-1 text-[11px] font-semibold uppercase tracking-[0.16em] transition-colors",
+                  isActive(link.href)
+                    ? "border-enterprise-gold text-white"
+                    : "border-transparent text-white/70 hover:text-white"
+                )}
               >
-                <Phone className="h-4 w-4 text-enterprise-blue" />
-                Call (832) 960-4471
+                {link.label}
               </Link>
-              <Link href="/quotes" onClick={() => setOpen(false)} className="mt-2">
-                <Button className="w-full rounded-xl py-3.5">Request a Quote</Button>
-              </Link>
-            </div>
+            ))}
+          </nav>
+          <div className="hidden items-center gap-6 xl:flex">
+            <Link
+              href="tel:18329604471"
+              className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition-colors hover:text-enterprise-gold"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              832-960-4471
+            </Link>
+            <Link
+              href="/quotes"
+              className="inline-flex items-center justify-center rounded-sharp bg-enterprise-gold px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-enterprise-navy transition-colors hover:bg-[#ffe39a]"
+            >
+              Request A Quote
+            </Link>
           </div>
-        </>
-      ) : null}
-    </header>
+          <div className="flex items-center gap-2 xl:hidden">
+            <Link
+              href="/quotes"
+              className="inline-flex items-center justify-center rounded-sharp bg-enterprise-gold px-4 py-2.5 text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-enterprise-navy transition-colors hover:bg-[#ffe39a]"
+            >
+              Quote
+            </Link>
+            <button
+              type="button"
+              className="rounded-sharp border border-white/30 p-2.5 text-white transition-colors hover:bg-white/10"
+              onClick={() => setOpen((value) => !value)}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label={open ? "Close menu" : "Open menu"}
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </div>
+      </header>
+      <div
+        id="mobile-menu"
+        className={cn(
+          "fixed inset-0 z-40 bg-enterprise-navy-deep transition duration-300 xl:hidden",
+          open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        )}
+        aria-hidden={!open}
+      >
+        <div className="flex h-full flex-col px-5 pb-10 pt-24 sm:px-8">
+          <nav className="flex-1 overflow-y-auto border-t border-white/10" aria-label="Mobile">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "font-display block border-b border-white/10 py-5 text-2xl font-bold uppercase tracking-[0.01em] transition-colors",
+                  isActive(link.href) ? "text-enterprise-gold" : "text-white/85 hover:text-white"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="font-display block border-b border-white/10 py-5 text-2xl font-bold uppercase tracking-[0.01em] text-white/85 transition-colors hover:text-white"
+            >
+              Employee Login
+            </Link>
+          </nav>
+          <div className="mt-8 grid gap-3">
+            <Link
+              href="/quotes"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center justify-center rounded-sharp bg-enterprise-gold px-7 py-3.5 text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-enterprise-navy transition-colors hover:bg-[#ffe39a]"
+            >
+              Request A Quote
+            </Link>
+            <Link
+              href="tel:18329604471"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center justify-center gap-2 rounded-sharp border border-white/45 px-7 py-3.5 text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:bg-white/10"
+            >
+              Call 832-960-4471
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

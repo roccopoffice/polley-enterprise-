@@ -25,22 +25,26 @@ const faqs = [
 
 export function FAQSection() {
   return (
-    <section className="section-spacing">
-      <div className="mx-auto max-w-6xl px-4">
+    <section className="section-pad bg-white">
+      <div className="container-enterprise">
         <SectionHeader
           eyebrow="Questions"
           title="Simple answers before you book"
-          description="A few quick notes to help customers feel comfortable reaching out."
-          align="center"
+          description="A few quick notes to help you feel comfortable reaching out."
         />
-        <div className="mt-10 grid gap-4 md:grid-cols-2">
-          {faqs.map((faq) => (
+        <div className="mt-14 grid border-t border-enterprise-border sm:grid-cols-2">
+          {faqs.map((faq, index) => (
             <article
               key={faq.question}
-              className="card-glow rounded-3xl border border-enterprise-border bg-white p-6 shadow-[0_12px_30px_rgba(6,16,36,0.07)]"
+              className="border-b border-enterprise-border py-9 sm:pr-10 sm:even:border-l sm:even:pl-10 sm:even:pr-0"
             >
-              <h3 className="text-xl font-bold text-enterprise-charcoal">{faq.question}</h3>
-              <p className="mt-3 text-base leading-relaxed text-enterprise-gray">{faq.answer}</p>
+              <span className="index-numeral">0{index + 1}</span>
+              <h3 className="font-display mt-4 text-xl font-bold uppercase tracking-[0.01em] text-enterprise-charcoal">
+                {faq.question}
+              </h3>
+              <p className="mt-3 max-w-md text-[0.9375rem] leading-[1.7] text-enterprise-gray">
+                {faq.answer}
+              </p>
             </article>
           ))}
         </div>

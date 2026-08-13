@@ -1,16 +1,5 @@
 export type UserRole = "admin" | "dispatcher" | "employee";
 
-export type ShipmentStatus =
-  | "created"
-  | "assigned"
-  | "shift_started"
-  | "picked_up"
-  | "in_transit"
-  | "arrived"
-  | "delivered"
-  | "delayed"
-  | "cancelled";
-
 export type ServiceType =
   | "vehicle_transport"
   | "freight_hauling"
@@ -24,13 +13,26 @@ export type ServiceType =
   | "power_washing"
   | "trailer_washout";
 
-export type Profile = {
+export type ShipmentStatus =
+  | "created"
+  | "assigned"
+  | "shift_started"
+  | "picked_up"
+  | "in_transit"
+  | "arrived"
+  | "delivered"
+  | "delayed"
+  | "cancelled";
+
+export type SessionUser = {
   id: string;
+  email: string;
   full_name: string;
   phone: string | null;
   role: UserRole;
-  created_at: string;
 };
+
+export type Employee = SessionUser;
 
 export type Shipment = {
   id: string;
@@ -75,34 +77,44 @@ export type LocationPing = {
   recorded_at: string;
 };
 
-export type ShiftSession = {
+/** The trimmed-down shape the public tracking endpoint returns. */
+export type TrackedShipment = {
+  tracking_number: string;
+  status: ShipmentStatus;
+  service_type: ServiceType;
+  pickup_city: string;
+  pickup_state: string;
+  dropoff_city: string;
+  dropoff_state: string;
+  scheduled_for: string | null;
+  public_notes: string | null;
+  updated_at: string;
+};
+
+export type TrackedEvent = {
+  status: ShipmentStatus;
+  title: string;
+  message: string | null;
+  created_at: string;
+};
+
+export type TrackingResult = {
+  shipment: TrackedShipment;
+  events: TrackedEvent[];
+  location: { latitude: number; longitude: number; recorded_at: string } | null;
+};
+
+export type QuoteRequest = {
   id: string;
-  shipment_id: string;
-  employee_id: string;
-  started_at: string;
-  ended_at: string | null;
-  is_active: boolean;
-};
-
-export type PublicTrackingResult = Pick<
-  Shipment,
-  | "id"
-  | "tracking_number"
-  | "service_type"
-  | "status"
-  | "pickup_city"
-  | "pickup_state"
-  | "dropoff_city"
-  | "dropoff_state"
-  | "scheduled_for"
-  | "public_notes"
-  | "updated_at"
-> & {
-  shipment_events?: ShipmentEvent[];
-  location_pings?: Pick<LocationPing, "latitude" | "longitude" | "recorded_at">[];
-};
-
-export type DashboardShipment = Shipment & {
-  shipment_events?: ShipmentEvent[];
-  location_pings?: LocationPing[];
+  form: string;
+  full_name: string;
+  email: string | null;
+  phone: string | null;
+  inquiry_type: string | null;
+  location: string | null;
+  preferred_date: string | null;
+  details: string | null;
+  extra: string | null;
+  status: "new" | "contacted" | "closed";
+  created_at: string;
 };

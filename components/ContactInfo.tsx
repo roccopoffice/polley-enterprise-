@@ -3,8 +3,8 @@ import { Mail, MapPin, Phone, Instagram } from "lucide-react";
 
 export function ContactInfo() {
   return (
-    <div className="rounded-3xl border border-enterprise-border bg-white p-6 shadow-card md:p-8">
-      <h3 className="text-2xl font-bold text-enterprise-charcoal">Contact Information</h3>
+    <div className="rounded-card border border-enterprise-border bg-white p-6 shadow-card md:p-8">
+      <h3 className="font-display text-2xl font-bold uppercase tracking-[0.01em] text-enterprise-charcoal">Contact Information</h3>
       <p className="mt-2 text-enterprise-gray">Anthony Polley</p>
       <div className="mt-6 space-y-4">
         <p className="flex items-center gap-3 text-enterprise-charcoal">

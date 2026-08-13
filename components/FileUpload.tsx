@@ -17,7 +17,7 @@ export function FileUpload({ id, label, helpText, onChange }: FileUploadProps) {
       </label>
       <label
         htmlFor={id}
-        className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-enterprise-border bg-white px-4 py-3 text-sm text-enterprise-gray hover:border-enterprise-blue hover:bg-enterprise-light"
+        className="flex cursor-pointer items-center gap-3 rounded-sharp border border-dashed border-enterprise-border bg-white px-4 py-3 text-sm text-enterprise-gray hover:border-enterprise-blue hover:bg-enterprise-light"
       >
         <Upload className="h-4 w-4 text-enterprise-blue" />
         <span>Choose file</span>

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SectionHeader } from "@/components/SectionHeader";
-import { AnimatedSection } from "@/components/AnimatedSection";
-import { Button } from "@/components/Button";
+import { PageHero } from "@/components/PageHero";
 import { ServiceAccordion } from "@/components/ServiceAccordion";
 
 export const metadata: Metadata = {
@@ -92,35 +90,28 @@ const serviceSections = [
 export default function ServicesPage() {
   return (
     <>
-      <section className="page-top pb-16">
-        <div className="mx-auto max-w-6xl px-4">
-          <SectionHeader
-            eyebrow="Services"
-            title="Professional services built around your schedule"
-            description="Every service is handled with clear communication, dependable timing, and practical support."
-            align="center"
-          />
-        </div>
-      </section>
-      <AnimatedSection className="section-spacing">
-        <div className="mx-auto max-w-6xl px-4">
+      <PageHero
+        eyebrow="Services"
+        title="Built around your schedule"
+        description="Every service is handled with clear communication, dependable timing, and practical support."
+      />
+      <section className="section-pad bg-enterprise-canvas">
+        <div className="container-enterprise max-w-5xl">
           <ServiceAccordion items={serviceSections} />
-        </div>
-      </AnimatedSection>
-      <section className="pb-28">
-        <div className="mx-auto max-w-6xl px-4 text-center">
-          <div className="section-shell px-6 py-9">
-            <p className="text-enterprise-gray">
-              Need help choosing? Tell us your goal and we will guide you.
-            </p>
-            <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/quotes">
-                <Button className="rounded-2xl px-8 py-3.5">Get a Quote</Button>
+          <div className="mt-14 flex flex-col gap-4 border-t border-enterprise-border pt-8 text-sm leading-relaxed text-enterprise-gray md:flex-row md:items-center md:justify-between">
+            <p>Need help choosing? Tell us your goal and we will guide you.</p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/quotes"
+                className="inline-flex items-center justify-center rounded-sharp bg-enterprise-gold px-8 py-3.5 text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-enterprise-navy transition-colors hover:bg-[#ffe39a]"
+              >
+                Request A Quote
               </Link>
-              <Link href="tel:18329604471">
-                <Button variant="secondary" className="rounded-2xl px-8 py-3.5">
-                  Call Now
-                </Button>
+              <Link
+                href="tel:18329604471"
+                className="inline-flex items-center justify-center rounded-sharp border border-enterprise-charcoal/25 px-8 py-3.5 text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-enterprise-charcoal transition-colors hover:border-enterprise-charcoal hover:bg-enterprise-charcoal hover:text-white"
+              >
+                Call 832-960-4471
               </Link>
             </div>
           </div>

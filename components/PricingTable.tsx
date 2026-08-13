@@ -9,7 +9,7 @@ type PricingTableProps = {
 
 export function PricingTable({ rows }: PricingTableProps) {
   return (
-    <div className="overflow-hidden rounded-3xl border border-enterprise-border bg-white shadow-card">
+    <div className="overflow-hidden rounded-card border border-enterprise-border bg-white shadow-card">
       <div className="bg-enterprise-blue px-6 py-4">
         <h3 className="text-xl font-bold text-white">Washout Service Pricing</h3>
       </div>
@@ -36,7 +36,7 @@ export function PricingTable({ rows }: PricingTableProps) {
       </div>
       <div className="space-y-3 p-5 md:hidden">
         {rows.map((row) => (
-          <div key={row.service} className="rounded-2xl border border-enterprise-border p-4">
+          <div key={row.service} className="rounded-sharp border border-enterprise-border p-4">
             <p className="font-semibold text-enterprise-charcoal">{row.service}</p>
             <p className="mt-1 text-enterprise-blue">{row.price}</p>
           </div>

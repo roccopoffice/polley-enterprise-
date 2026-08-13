@@ -18,42 +18,45 @@ export function ServiceAccordion({ items }: ServiceAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number>(0);
 
   return (
-    <div className="space-y-5">
+    <div className="border-t border-enterprise-border">
       {items.map((item, index) => {
         const isOpen = openIndex === index;
         return (
-          <article
-            key={item.title}
-            className="overflow-hidden rounded-3xl border border-enterprise-border bg-white shadow-[0_14px_35px_rgba(6,33,63,0.08)] transition hover:shadow-[0_18px_46px_rgba(11,42,91,0.16)]"
-          >
+          <article key={item.title} className="border-b border-enterprise-border bg-transparent">
             <button
               type="button"
-              className="flex w-full items-center justify-between gap-4 bg-gradient-to-r from-white to-enterprise-light/40 p-5 text-left sm:p-6 md:p-7"
+              className="flex w-full items-start justify-between gap-4 py-7 text-left"
               onClick={() => setOpenIndex(isOpen ? -1 : index)}
               aria-expanded={isOpen}
             >
-              <div>
-                <h3 className="text-xl font-bold leading-tight text-enterprise-charcoal sm:text-2xl">{item.title}</h3>
-                <p className="mt-2 text-sm text-enterprise-gray md:text-base">{item.summary}</p>
+              <div className="grid grid-cols-[auto_1fr] gap-x-5 sm:gap-x-8">
+                <span className="index-numeral pt-1.5">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className="font-display text-xl font-bold uppercase leading-tight tracking-[0.01em] text-enterprise-charcoal sm:text-2xl">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-[1.7] text-enterprise-gray md:text-base">
+                    {item.summary}
+                  </p>
+                </div>
               </div>
-              <span className="rounded-full bg-white p-2 shadow-sm">
-                <ChevronDown
-                  className={cn(
-                    "h-5 w-5 shrink-0 text-enterprise-blue transition-transform",
-                    isOpen ? "rotate-180" : "rotate-0"
-                  )}
-                />
-              </span>
+              <ChevronDown
+                className={cn(
+                  "mt-1 h-5 w-5 shrink-0 text-enterprise-blue transition-transform",
+                  isOpen ? "rotate-180" : "rotate-0"
+                )}
+              />
             </button>
             {isOpen ? (
-              <div className="border-t border-enterprise-border px-5 py-5 sm:px-6 md:px-7">
-                <ul className="space-y-2.5">
+              <div className="pb-8 pl-0 sm:pl-[4.5rem]">
+                <ul className="max-w-2xl border-t border-enterprise-border">
                   {item.bullets.map((bullet) => (
                     <li
                       key={bullet}
-                      className="rounded-lg bg-enterprise-light/35 px-3.5 py-2.5 text-sm text-enterprise-charcoal md:text-base"
+                      className="border-b border-enterprise-border py-3 text-sm font-medium text-enterprise-charcoal md:text-[0.9375rem]"
                     >
-                      <span className="mr-2 text-enterprise-blue">•</span>
                       {bullet}
                     </li>
                   ))}

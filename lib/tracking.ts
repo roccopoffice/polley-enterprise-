@@ -1,4 +1,4 @@
-import type { ServiceType, ShipmentStatus } from "@/lib/supabase/types";
+import type { ServiceType, ShipmentStatus } from "@/lib/types";
 
 export const serviceTypeLabels: Record<ServiceType, string> = {
   vehicle_transport: "Vehicle Transportation",
@@ -42,11 +42,6 @@ export const serviceTypeOptions: { label: string; value: ServiceType }[] = Objec
 
 export function formatTrackingNumber(value: string) {
   return value.trim().toUpperCase().replace(/\s+/g, "");
-}
-
-export function createTrackingNumber() {
-  const random = Math.floor(10000 + Math.random() * 90000);
-  return `PE-${random}`;
 }
 
 export function formatDateTime(value?: string | null) {

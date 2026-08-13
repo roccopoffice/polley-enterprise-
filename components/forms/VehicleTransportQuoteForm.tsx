@@ -9,6 +9,7 @@ import { Input } from "@/components/Input";
 import { Textarea } from "@/components/Textarea";
 import { Select } from "@/components/Select";
 import { Button } from "@/components/Button";
+import { submitForm } from "@/lib/api";
 
 export function VehicleTransportQuoteForm() {
   const formId = useId().replace(/:/g, "");
@@ -42,29 +43,23 @@ export function VehicleTransportQuoteForm() {
   const onSubmit = async (values: VehicleQuoteInput) => {
     setServerState(null);
     try {
-      const netlifyFormName = "vehicle-transport-quote-form";
-      const body = new URLSearchParams({
-        "form-name": netlifyFormName,
+      await submitForm({
+        form: "vehicle-transport",
         fullName: values.fullName,
         email: values.email,
-        phoneNumber: values.phoneNumber,
+        phone: values.phoneNumber,
+        inquiryType: "Vehicle Transportation",
+        location: `${values.pickupLocation} to ${values.deliveryLocation}`,
+        details: values.additionalNotes || "",
         pickupLocation: values.pickupLocation,
         deliveryLocation: values.deliveryLocation,
         vehicleYear: values.vehicleYear,
         vehicleMake: values.vehicleMake,
         vehicleModel: values.vehicleModel,
         trailerType: values.trailerType,
-        additionalNotes: values.additionalNotes || "",
         companyWebsite: values.companyWebsite || "",
-        submittedAt: String(startedAtRef.current),
+        submittedAt: startedAtRef.current,
       });
-
-      const response = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
-      });
-      if (!response.ok) throw new Error("Unable to send quote request.");
 
       reset();
       startedAtRef.current = Date.now();
@@ -84,28 +79,9 @@ export function VehicleTransportQuoteForm() {
   return (
     <>
       <form
-        name="vehicle-transport-quote-form"
-        data-netlify="true"
-        data-netlify-honeypot="companyWebsite"
-        hidden
-      >
-        <input type="text" name="fullName" />
-        <input type="email" name="email" />
-        <input type="tel" name="phoneNumber" />
-        <input type="text" name="pickupLocation" />
-        <input type="text" name="deliveryLocation" />
-        <input type="text" name="vehicleYear" />
-        <input type="text" name="vehicleMake" />
-        <input type="text" name="vehicleModel" />
-        <input type="text" name="trailerType" />
-        <textarea name="additionalNotes" />
-        <input type="text" name="companyWebsite" />
-        <input type="text" name="submittedAt" />
-      </form>
-      <form
         id={formId}
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 rounded-3xl border border-enterprise-border bg-white p-6 shadow-card md:p-8"
+        className="space-y-4 rounded-card border border-enterprise-border bg-white p-6 shadow-card md:p-8"
         noValidate
       >
       <Input id="fullName" label="Full Name" error={errors.fullName?.message} {...register("fullName")} />

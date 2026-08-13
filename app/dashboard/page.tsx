@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SectionHeader } from "@/components/SectionHeader";
+import { PageHero } from "@/components/PageHero";
 import { EmployeeDashboard } from "@/components/tracking/EmployeeDashboard";
 
 export const metadata: Metadata = {
@@ -10,18 +10,13 @@ export const metadata: Metadata = {
 export default function DashboardPage() {
   return (
     <>
-      <section className="page-top pb-12">
-        <div className="mx-auto max-w-7xl px-4">
-          <SectionHeader
-            eyebrow="Dashboard"
-            title="Shipment dispatch center"
-            description="Start shifts, update shipment status, and keep customer tracking accurate."
-            align="center"
-          />
-        </div>
-      </section>
-      <section className="pb-28">
-        <div className="mx-auto max-w-7xl px-4">
+      <PageHero
+        eyebrow="Dashboard"
+        title="Shipment dispatch center"
+        description="Start shifts, update shipment status, and keep customer tracking accurate."
+      />
+      <section className="section-pad bg-enterprise-canvas">
+        <div className="container-enterprise">
           <EmployeeDashboard />
         </div>
       </section>

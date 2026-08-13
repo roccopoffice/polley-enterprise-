@@ -5,7 +5,7 @@ import { FormEvent, useState } from "react";
 import { AlertCircle, Loader2, LockKeyhole } from "lucide-react";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
-import { getSupabaseBrowserClient, hasSupabaseConfig } from "@/lib/supabase/client";
+import { ApiError, login } from "@/lib/api";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -16,36 +16,27 @@ export function LoginForm() {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-
-    if (!hasSupabaseConfig()) {
-      setError("Employee login is ready, but Supabase keys still need to be added in Netlify.");
-      return;
-    }
-
     setIsLoading(true);
+
     try {
-      const supabase = getSupabaseBrowserClient();
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (signInError) throw signInError;
-
+      await login(email, password);
       window.location.href = "/dashboard";
-    } catch {
-      setError("Login failed. Please check the email and password.");
-    } finally {
+    } catch (loginError) {
+      setError(
+        loginError instanceof ApiError
+          ? loginError.message
+          : "Login failed. Please check the email and password."
+      );
       setIsLoading(false);
     }
   }
 
   return (
     <form onSubmit={onSubmit} className="section-shell mx-auto max-w-xl p-6 md:p-8">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-enterprise-blue/10 text-enterprise-blue">
+      <div className="flex h-12 w-12 items-center justify-center rounded-sharp bg-enterprise-blue/10 text-enterprise-blue">
         <LockKeyhole className="h-6 w-6" />
       </div>
-      <h2 className="mt-5 text-3xl font-bold text-enterprise-charcoal">Employee login</h2>
+      <h2 className="font-display mt-5 text-3xl font-bold uppercase tracking-[0.01em] text-enterprise-charcoal">Employee login</h2>
       <p className="mt-3 text-enterprise-gray">
         Sign in to view assigned shipments, start a shift, and update customer deliveries.
       </p>
@@ -72,19 +63,19 @@ export function LoginForm() {
       </div>
 
       {error ? (
-        <p className="mt-4 flex gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">
+        <p className="mt-4 flex gap-2 rounded-sharp border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           {error}
         </p>
       ) : null}
 
-      <Button type="submit" className="mt-6 w-full rounded-2xl" disabled={isLoading}>
+      <Button type="submit" className="mt-6 w-full rounded-sharp" disabled={isLoading}>
         {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
         Sign In
       </Button>
 
       <p className="mt-5 text-center text-sm text-enterprise-gray">
-        Need a login? Ask a dispatcher or Supabase admin to create your employee account.
+        Need a login? Ask your dispatcher to set up your employee account.
       </p>
       <Link
         href="/track"

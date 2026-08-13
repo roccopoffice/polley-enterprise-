@@ -3,6 +3,7 @@ type SectionHeaderProps = {
   title: string;
   description?: string;
   align?: "left" | "center";
+  dark?: boolean;
 };
 
 export function SectionHeader({
@@ -10,26 +11,26 @@ export function SectionHeader({
   title,
   description,
   align = "left",
+  dark = false,
 }: SectionHeaderProps) {
   return (
-    <div className={align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
+    <div className={align === "center" ? "mx-auto max-w-2xl text-center" : "max-w-2xl"}>
       {eyebrow ? (
-        <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-enterprise-blue/20 bg-gradient-to-r from-white to-enterprise-light px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-enterprise-blue shadow-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-enterprise-gold" />
-          {eyebrow}
-        </p>
+        <p className={dark ? "eyebrow eyebrow-light mb-6" : "eyebrow mb-6"}>{eyebrow}</p>
       ) : null}
-      <h2
-        className={
-          align === "center"
-            ? "gold-underline text-2xl font-bold leading-[1.1] tracking-tight text-enterprise-charcoal sm:text-3xl md:text-[3.1rem] md:leading-[1.08]"
-            : "text-2xl font-bold leading-[1.1] tracking-tight text-enterprise-charcoal sm:text-3xl md:text-[3.1rem] md:leading-[1.08]"
-        }
-      >
+      <h2 className={dark ? "heading-display text-white" : "heading-display text-enterprise-charcoal"}>
         {title}
       </h2>
       {description ? (
-        <p className="mt-5 text-base leading-relaxed text-enterprise-gray md:text-lg">{description}</p>
+        <p
+          className={
+            dark
+              ? "mt-6 text-base leading-[1.75] text-white/70 sm:text-lg"
+              : "mt-6 text-base leading-[1.75] text-enterprise-gray sm:text-lg"
+          }
+        >
+          {description}
+        </p>
       ) : null}
     </div>
   );

@@ -10,6 +10,7 @@ import { Textarea } from "@/components/Textarea";
 import { Select } from "@/components/Select";
 import { FileUpload } from "@/components/FileUpload";
 import { Button } from "@/components/Button";
+import { submitForm } from "@/lib/api";
 
 const positions = [
   "Drivers",
@@ -54,29 +55,21 @@ export function CareersApplicationForm() {
   const onSubmit = async (values: CareersApplicationInput) => {
     setServerState(null);
     try {
-      const netlifyFormName = "careers-application-form";
-      const body = new URLSearchParams({
-        "form-name": netlifyFormName,
+      await submitForm({
+        form: "careers",
         fullName: values.fullName,
         email: values.email,
-        phoneNumber: values.phoneNumber,
-        address: values.address,
-        positionApplyingFor: values.positionApplyingFor,
+        phone: values.phoneNumber,
+        inquiryType: `Job Application — ${values.positionApplyingFor}`,
+        location: values.address,
+        details: values.coverLetter || "",
         yearsOfExperience: values.yearsOfExperience,
         resumeFileName: resumeFileName || "Not provided",
         certifications: values.certifications || "",
-        coverLetter: values.coverLetter || "",
         availability: values.availability,
         companyWebsite: values.companyWebsite || "",
-        submittedAt: String(startedAtRef.current),
+        submittedAt: startedAtRef.current,
       });
-
-      const response = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
-      });
-      if (!response.ok) throw new Error("Unable to submit application.");
 
       reset();
       setResumeFileName("");
@@ -96,28 +89,9 @@ export function CareersApplicationForm() {
   return (
     <>
       <form
-        name="careers-application-form"
-        data-netlify="true"
-        data-netlify-honeypot="companyWebsite"
-        hidden
-      >
-        <input type="text" name="fullName" />
-        <input type="email" name="email" />
-        <input type="tel" name="phoneNumber" />
-        <input type="text" name="address" />
-        <input type="text" name="positionApplyingFor" />
-        <input type="text" name="yearsOfExperience" />
-        <input type="text" name="resumeFileName" />
-        <input type="text" name="certifications" />
-        <textarea name="coverLetter" />
-        <input type="text" name="availability" />
-        <input type="text" name="companyWebsite" />
-        <input type="text" name="submittedAt" />
-      </form>
-      <form
         id={formId}
         onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4 rounded-3xl border border-enterprise-border bg-white p-6 shadow-card md:p-8"
+        className="space-y-4 rounded-card border border-enterprise-border bg-white p-6 shadow-card md:p-8"
         noValidate
       >
       <Input id="careerFullName" label="Full Name" error={errors.fullName?.message} {...register("fullName")} />

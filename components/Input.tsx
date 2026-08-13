@@ -10,14 +10,17 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ id, label, error, className, ...props }, ref) => (
     <div className="space-y-2">
-      <label htmlFor={id} className="block text-base font-semibold text-enterprise-charcoal">
+      <label
+        htmlFor={id}
+        className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-enterprise-charcoal"
+      >
         {label}
       </label>
       <input
         id={id}
         ref={ref}
         className={cn(
-          "w-full rounded-xl border border-enterprise-border bg-white px-4 py-3.5 text-base text-enterprise-charcoal shadow-sm transition focus:border-enterprise-blue focus:outline-none focus:ring-2 focus:ring-enterprise-blue/20",
+          "w-full rounded-sharp border border-enterprise-border bg-white px-4 py-3.5 text-base text-enterprise-charcoal transition focus:border-enterprise-blue focus:outline-none focus:ring-2 focus:ring-enterprise-blue/20",
           error && "border-red-500 focus:border-red-500 focus:ring-red-200",
           className
         )}

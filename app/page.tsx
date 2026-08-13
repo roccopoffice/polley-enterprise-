@@ -1,20 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  Truck,
-  Car,
-  Waves,
-  SprayCan,
-  House,
-  Users,
-  Package,
-  CheckCircle2,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Hero } from "@/components/Hero";
 import { SectionHeader } from "@/components/SectionHeader";
-import { AnimatedSection } from "@/components/AnimatedSection";
-import { ServiceCard } from "@/components/ServiceCard";
-import { Button } from "@/components/Button";
 import { FAQSection } from "@/components/FAQSection";
 
 export const metadata: Metadata = {
@@ -26,113 +15,122 @@ export const metadata: Metadata = {
     description:
       "Houston service support for hauling, transport, cleaning, washouts, moving, and personnel transportation.",
   },
-  keywords: ["Houston hot shot hauling", "vehicle transport Houston", "freight hauling Texas", "fleet cleaning", "trailer washout", "power washing"],
+  keywords: [
+    "Houston hot shot hauling",
+    "vehicle transport Houston",
+    "freight hauling Texas",
+    "fleet cleaning",
+    "trailer washout",
+    "power washing",
+  ],
 };
+
+const stripItems = [
+  "Hot Shot Hauling",
+  "Vehicle Transport",
+  "Freight & Cargo",
+  "Washouts & Cleaning",
+  "Moving Support",
+];
 
 const services = [
   {
     title: "Hot Shot Hauling",
-    description: "Fast, flexible hauling for urgent loads, equipment, and time-sensitive deliveries.",
-    href: "/quotes",
+    description:
+      "Fast, flexible hauling for urgent loads, equipment, and time-sensitive deliveries.",
     imageSrc: "/images/hot-shot.jpg",
     imageAlt: "Hot shot hauling rig with flatbed trailer",
-    icon: <Truck className="h-5 w-5" />,
-    ctaLabel: "Get Quote",
   },
   {
     title: "Vehicle Transportation",
     description: "Open or enclosed transport for cars, trucks, and specialty vehicles.",
-    href: "/quotes",
     imageSrc: "/images/car-transport.jpg",
     imageAlt: "Vehicle on a transport trailer",
-    icon: <Car className="h-5 w-5" />,
-    ctaLabel: "Get Quote",
   },
   {
     title: "Freight & Cargo Support",
     description: "Freight hauling, equipment transport, courier routes, and general load support.",
-    href: "/quotes",
     imageSrc: "/images/freight-hauling.jpg",
     imageAlt: "Semi truck carrying freight",
-    icon: <Truck className="h-5 w-5" />,
-    ctaLabel: "Get Quote",
   },
   {
     title: "Trailer Washouts",
     description: "Clean, ready trailers with fast washout turnaround.",
-    href: "/quotes",
     imageSrc: "/images/trailer-washout.jpg",
     imageAlt: "Trailer washout service in progress",
-    icon: <Waves className="h-5 w-5" />,
-    ctaLabel: "Get Quote",
   },
   {
     title: "Big Rig Cleaning",
     description: "Exterior cleaning for semis and fleet vehicles.",
-    href: "/quotes",
     imageSrc: "/images/big-rig-cleaning.jpg",
     imageAlt: "Cleaned semi truck exterior",
-    icon: <SprayCan className="h-5 w-5" />,
-    ctaLabel: "Get Quote",
   },
   {
     title: "Residential Power Washing",
     description: "Driveways, siding, patios, and exterior surface cleaning.",
-    href: "/quotes",
     imageSrc: "/images/power-washing.jpg",
     imageAlt: "Home exterior power washing",
-    icon: <House className="h-5 w-5" />,
-    ctaLabel: "Get Quote",
+  },
+];
+
+const capabilities = [
+  {
+    title: "Hot shot rig and flatbed hauling",
+    description: "Urgent loads picked up and delivered on your timeline, not next week's.",
   },
   {
-    title: "Personnel Transportation",
-    description: "Safe transportation support for teams and consultants.",
-    href: "/quotes",
-    imageSrc: "/images/personnel-transport.jpg",
-    imageAlt: "Professional personnel transportation service",
-    icon: <Users className="h-5 w-5" />,
-    ctaLabel: "Get Quote",
+    title: "Vehicle, freight, and equipment movement",
+    description: "Cars, cargo, and machinery moved locally or across Texas.",
   },
   {
-    title: "Moving Services",
-    description: "Simple moving help for homes, apartments, and small businesses.",
-    href: "/quotes",
-    imageSrc: "/images/moving-services.jpg",
-    imageAlt: "Moving support service with loaded truck",
-    icon: <Package className="h-5 w-5" />,
-    ctaLabel: "Get Quote",
+    title: "Trailer washouts and 18-wheeler cleaning",
+    description: "Trailers and rigs cleaned fast so your fleet keeps rolling.",
+  },
+  {
+    title: "Power washing and moving support",
+    description: "Residential exterior cleaning plus loading, hauling, and moving help.",
+  },
+  {
+    title: "Personnel transportation",
+    description: "Safe, professional transport for teams, crews, and consultants.",
   },
 ];
 
 const reasons = [
-  "Hot shot and freight-ready",
-  "Vehicle transport support",
-  "Fleet and rig cleaning",
-  "Local and regional routes",
-  "Clear customer updates",
-  "Easy quote process",
+  {
+    title: "One team, many services",
+    description:
+      "Hauling, transport, washouts, cleaning, and moving handled by the same crew — no juggling vendors.",
+  },
+  {
+    title: "Fast, honest scheduling",
+    description:
+      "Call or send a request and get real timing and pricing, not a form receipt that goes nowhere.",
+  },
+  {
+    title: "Houston-based, Texas-wide",
+    description:
+      "Local knowledge of Houston routes with reach across the state for longer moves.",
+  },
+  {
+    title: "Direct dispatch line",
+    description: "Call 832-960-4471 for scheduling, updates, and urgent same-day requests.",
+  },
 ];
 
 const processSteps = [
   {
-    label: "Pick the job",
-    description: "Hauling, transport, cleaning, moving, or personnel service.",
+    title: "Pick the job",
+    description: "Hauling, transport, cleaning, washouts, moving, or personnel service.",
   },
   {
-    label: "Share the details",
+    title: "Share the details",
     description: "Tell us where, when, what is moving, and what support is needed.",
   },
   {
-    label: "We handle the work",
+    title: "We handle the work",
     description: "The team follows up with clear timing, pricing, and next steps.",
   },
-];
-
-const capabilityHighlights = [
-  "Hot shot rig and flatbed hauling",
-  "Vehicle, freight, and equipment movement",
-  "Trailer washouts and 18-wheeler cleaning",
-  "Residential power washing and moving support",
 ];
 
 const testimonials = [
@@ -156,162 +154,221 @@ const testimonials = [
   },
 ];
 
-const bigStats = [
-  { value: "8+", label: "Services Offered" },
-  { value: "24/7", label: "Request Line" },
-  { value: "TX", label: "Statewide Routes" },
-  { value: "#1", label: "Priority: Your Job" },
-];
-
 export default function HomePage() {
   return (
     <>
       <Hero />
 
-      {/* Stats band */}
-      <div className="navy-grid-bg relative overflow-hidden">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-10 md:grid-cols-4 md:py-12">
-          {bigStats.map((stat) => (
-            <div key={stat.label} className="text-center">
-              <p className="text-gold-gradient text-3xl font-extrabold tracking-tight md:text-5xl">
-                {stat.value}
-              </p>
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.18em] text-white/70 md:text-xs">
-                {stat.label}
-              </p>
-            </div>
+      {/* Services strip */}
+      <div className="border-b border-enterprise-border bg-white">
+        <div className="container-enterprise grid grid-cols-2 gap-y-4 py-7 sm:grid-cols-3 lg:grid-cols-5 lg:gap-y-0 lg:divide-x lg:divide-enterprise-border lg:py-0">
+          {stripItems.map((item) => (
+            <p
+              key={item}
+              className="text-[11px] font-semibold uppercase tracking-[0.18em] text-enterprise-charcoal/70 lg:px-6 lg:py-7 lg:text-center"
+            >
+              {item}
+            </p>
           ))}
         </div>
       </div>
-      <AnimatedSection className="section-spacing">
-        <div className="mx-auto max-w-6xl px-4">
-          <SectionHeader
-            eyebrow="What We Do"
-            title="One team for hauling, transport, cleaning, and support."
-            description="Polley Enterprise is built for customers who need real help fast: hot shot hauling, vehicle movement, freight support, washouts, cleaning, moving, and personnel transportation."
-            align="center"
-          />
-          <div className="section-shell mx-auto mt-10 max-w-6xl overflow-hidden p-0">
-            <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="navy-grid-bg relative overflow-hidden p-7 text-white md:p-10">
-                <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-enterprise-gold/10 blur-3xl animate-pulseglow" />
-                <p className="text-sm font-bold uppercase tracking-[0.16em] text-enterprise-gold">
-                  Built Around Service
-                </p>
-                <h3 className="mt-4 text-3xl font-bold leading-tight md:text-4xl">
-                  If it needs to move, get cleaned, or get handled, start here.
-                </h3>
-                <div className="mt-6 space-y-3">
-                  {capabilityHighlights.map((item) => (
-                    <p key={item} className="flex gap-3 text-sm text-white/90 md:text-base">
-                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-enterprise-gold" />
-                      <span>{item}</span>
-                    </p>
-                  ))}
-                </div>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <Link href="/quotes">
-                    <Button className="w-full rounded-2xl sm:w-auto">Request Service</Button>
-                  </Link>
-                  <Link href="/services">
-                    <Button
-                      variant="secondary"
-                      className="w-full rounded-2xl border-white/30 bg-white/10 text-white hover:bg-white/15 sm:w-auto"
-                    >
-                      View Services
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-              <div className="grid gap-4 p-6 md:grid-cols-3 md:p-8 lg:grid-cols-1">
-              {processSteps.map((step, index) => (
-                <div
-                  key={step.label}
-                  className="card-glow rounded-2xl border border-enterprise-border bg-white p-5"
-                >
-                  <p className="text-gold-gradient text-2xl font-extrabold">0{index + 1}</p>
-                  <h3 className="mt-2 text-lg font-bold text-enterprise-charcoal">{step.label}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-enterprise-gray">{step.description}</p>
-                </div>
-              ))}
-            </div>
-            </div>
-          </div>
-        </div>
-      </AnimatedSection>
 
-      <AnimatedSection className="section-spacing">
-        <div className="mx-auto max-w-7xl px-4">
+      {/* Core services */}
+      <section className="section-pad bg-enterprise-canvas">
+        <div className="container-enterprise">
           <SectionHeader
             eyebrow="Core Services"
-            title="See the work before you even call"
-            description="Hauling, transport, cleaning, washouts, and support — pick what you need and get a quote in minutes."
-            align="center"
+            title="Work we handle every week"
+            description="From urgent hauling and car transport to washouts, rig cleaning, and power washing — pick what you need and get a quote in minutes."
           />
-          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {services.slice(0, 6).map((service) => (
-              <ServiceCard key={service.title} {...service} />
+          <div className="mt-16 grid gap-x-10 gap-y-14 md:grid-cols-3">
+            {services.map((service, index) => (
+              <article key={service.title} className="group">
+                <Link href="/quotes" className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-enterprise-bright focus-visible:ring-offset-4">
+                  <div className="relative aspect-[4/3] overflow-hidden bg-enterprise-navy">
+                    <Image
+                      src={service.imageSrc}
+                      alt={service.imageAlt}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                    />
+                  </div>
+                  <div className="mt-6 flex items-baseline gap-4 border-t border-enterprise-border pt-5">
+                    <span className="index-numeral">0{index + 1}</span>
+                    <h3 className="font-display text-[1.375rem] font-bold uppercase leading-tight tracking-[0.01em] text-enterprise-charcoal transition-colors group-hover:text-enterprise-blue">
+                      {service.title}
+                    </h3>
+                  </div>
+                  <p className="mt-4 text-[0.9375rem] leading-[1.7] text-enterprise-gray">
+                    {service.description}
+                  </p>
+                </Link>
+              </article>
             ))}
           </div>
-          <div className="mt-8 text-center">
-            <Link href="/services">
-              <Button variant="secondary">See All Services</Button>
+          <div className="mt-16 border-t border-enterprise-border pt-10">
+            <Link
+              href="/services"
+              className="inline-flex items-center justify-center rounded-sharp border border-enterprise-charcoal/25 px-9 py-4 text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-enterprise-charcoal transition-colors hover:border-enterprise-charcoal hover:bg-enterprise-charcoal hover:text-white"
+            >
+              See All Services
             </Link>
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
-      <AnimatedSection className="section-spacing">
-        <div className="mx-auto max-w-5xl px-4">
-          <SectionHeader
-            eyebrow="Why It Works"
-            title="A simple way to book serious work"
-            align="center"
+      {/* Capabilities — dark */}
+      <section className="section-pad relative overflow-hidden bg-enterprise-navy-deep text-white">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/freight-hauling.jpg"
+            alt="Polley Enterprise freight hauling"
+            fill
+            sizes="100vw"
+            className="object-cover opacity-60"
           />
-          <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {reasons.map((item) => (
-              <div
-                key={item}
-                className="card-glow rounded-2xl border border-enterprise-border bg-white p-5 shadow-[0_14px_32px_rgba(6,33,63,0.08)]"
+          <div className="absolute inset-0 bg-gradient-to-r from-enterprise-navy-deep via-enterprise-navy-deep/90 to-enterprise-navy-deep/45" />
+        </div>
+        <div className="container-enterprise relative grid gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+          <div>
+            <p className="eyebrow eyebrow-light mb-6">Built Around Service</p>
+            <h2 className="heading-display text-white">
+              If it needs to move, get cleaned, or get handled — start here
+            </h2>
+            <p className="mt-6 text-base leading-[1.75] text-white/70 sm:text-lg">
+              Polley Enterprise is built for customers who need real help fast, with one crew
+              covering the whole job from pickup to cleanup.
+            </p>
+            <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <Link
+                href="/quotes"
+                className="inline-flex items-center justify-center rounded-sharp bg-enterprise-gold px-6 py-3.5 text-[11px] font-bold uppercase tracking-[0.16em] text-enterprise-navy transition-colors hover:bg-white"
               >
-                <p className="flex items-start gap-2 text-enterprise-charcoal">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-enterprise-blue" />
-                  <span>{item}</span>
+                Request Service
+              </Link>
+              <Link
+                href="/services"
+                className="inline-block border-b border-white/30 pb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/80 transition-colors hover:border-enterprise-gold hover:text-enterprise-gold"
+              >
+                View All Services
+              </Link>
+            </div>
+          </div>
+          <div>
+            {capabilities.map((item, index) => (
+              <div
+                key={item.title}
+                className="grid grid-cols-[auto_1fr] gap-x-6 border-t border-white/10 py-7 last:border-b sm:gap-x-10"
+              >
+                <span className="index-numeral index-numeral-light pt-1">0{index + 1}</span>
+                <div>
+                  <h3 className="font-display text-lg font-bold uppercase tracking-[0.02em] text-white sm:text-xl">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-[0.9375rem] leading-[1.7] text-white/65">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Polley */}
+      <section className="section-pad bg-enterprise-canvas">
+        <div className="container-enterprise">
+          <SectionHeader
+            eyebrow="Why Polley Enterprise"
+            title="A simple way to book serious work"
+            description="Customers stay because the job gets done, the phone gets answered, and the price is what we said it would be."
+          />
+          <div className="mt-16 grid border-t border-enterprise-border sm:grid-cols-2">
+            {reasons.map((item, index) => (
+              <div
+                key={item.title}
+                className="border-b border-enterprise-border py-9 sm:pr-10 sm:even:border-l sm:even:pl-10 sm:even:pr-0"
+              >
+                <span className="index-numeral">0{index + 1}</span>
+                <h3 className="font-display mt-4 text-xl font-bold uppercase tracking-[0.01em] text-enterprise-charcoal">
+                  {item.title}
+                </h3>
+                <p className="mt-3 max-w-md text-[0.9375rem] leading-[1.7] text-enterprise-gray">
+                  {item.description}
                 </p>
               </div>
             ))}
           </div>
         </div>
-      </AnimatedSection>
+      </section>
+
+      {/* Request process */}
+      <section className="section-pad bg-white">
+        <div className="container-enterprise">
+          <SectionHeader
+            eyebrow="Request Process"
+            title="What happens after you reach out"
+            description="No confusing forms, no waiting games. Tell us the job and we take it from there."
+          />
+          <div className="mt-14 grid border-t border-enterprise-border lg:grid-cols-3">
+            {processSteps.map((step, index) => (
+              <article
+                key={step.title}
+                className="border-b border-enterprise-border py-9 lg:border-r lg:px-8 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
+              >
+                <p className="index-numeral">0{index + 1}</p>
+                <h3 className="font-display mt-5 text-xl font-bold uppercase tracking-[0.01em] text-enterprise-charcoal">
+                  {step.title}
+                </h3>
+                <p className="mt-4 text-sm leading-[1.75] text-enterprise-gray">
+                  {step.description}
+                </p>
+              </article>
+            ))}
+          </div>
+          <div className="mt-10 flex flex-col gap-4 border-t border-enterprise-border pt-8 text-sm leading-relaxed text-enterprise-gray md:flex-row md:items-center md:justify-between">
+            <p>
+              For urgent, same-day moves, call{" "}
+              <Link href="tel:18329604471" className="font-semibold text-enterprise-blue">
+                832-960-4471
+              </Link>
+              .
+            </p>
+            <Link
+              href="/quotes"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-enterprise-navy underline decoration-enterprise-gold underline-offset-4"
+            >
+              Request A Quote <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Testimonials */}
-      <AnimatedSection className="section-spacing navy-grid-bg relative overflow-hidden">
-        <div className="pointer-events-none absolute -left-24 top-10 h-64 w-64 rounded-full bg-enterprise-bright/15 blur-3xl animate-pulseglow" />
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-enterprise-gold/40 bg-enterprise-gold/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-enterprise-gold">
-              <span className="h-1.5 w-1.5 rounded-full bg-enterprise-gold" />
-              What Customers Say
-            </p>
-            <h2 className="text-2xl font-bold leading-[1.1] tracking-tight text-white sm:text-3xl md:text-[3.1rem] md:leading-[1.08]">
-              Trusted for the jobs that matter
-            </h2>
-          </div>
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {testimonials.map((item) => (
+      <section className="section-pad bg-enterprise-light">
+        <div className="container-enterprise">
+          <SectionHeader
+            eyebrow="What Customers Say"
+            title="Trusted for the jobs that matter"
+          />
+          <div className="mt-14 grid border-t border-enterprise-charcoal/15 md:grid-cols-3">
+            {testimonials.map((item, index) => (
               <figure
                 key={item.name}
-                className="flex flex-col justify-between rounded-3xl border border-white/12 bg-white/[0.06] p-6 backdrop-blur-sm transition-colors hover:border-enterprise-gold/40 md:p-7"
+                className="flex flex-col justify-between border-b border-enterprise-charcoal/15 py-9 md:border-r md:px-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0"
               >
                 <div>
-                  <p className="text-gold-gradient text-2xl font-extrabold leading-none">&ldquo;</p>
-                  <blockquote className="mt-2 text-base leading-relaxed text-white/90">
-                    {item.quote}
+                  <span className="index-numeral">0{index + 1}</span>
+                  <blockquote className="mt-5 text-base leading-[1.75] text-enterprise-charcoal">
+                    &ldquo;{item.quote}&rdquo;
                   </blockquote>
                 </div>
-                <figcaption className="mt-6 border-t border-white/10 pt-4">
-                  <p className="font-bold text-white">{item.name}</p>
-                  <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-enterprise-gold">
+                <figcaption className="mt-7">
+                  <p className="font-display text-lg font-bold uppercase tracking-[0.02em] text-enterprise-charcoal">
+                    {item.name}
+                  </p>
+                  <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-enterprise-blue">
                     {item.service}
                   </p>
                 </figcaption>
@@ -319,37 +376,37 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
       <FAQSection />
 
-      <section className="section-spacing pb-28 pt-0">
-        <div className="mx-auto max-w-7xl px-4 text-center">
-          <div className="navy-grid-bg relative mx-auto max-w-4xl overflow-hidden rounded-[2rem] px-6 py-12 shadow-[0_30px_80px_rgba(6,16,36,0.35)] md:px-10 md:py-16">
-            <div className="pointer-events-none absolute -left-20 -top-20 h-56 w-56 rounded-full bg-enterprise-bright/25 blur-3xl animate-pulseglow" />
-            <div className="pointer-events-none absolute -bottom-24 -right-16 h-64 w-64 rounded-full bg-enterprise-gold/15 blur-3xl animate-pulseglow" />
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-enterprise-gold">
-              Let&apos;s Get It Handled
-            </p>
-            <h2 className="mt-3 text-3xl font-bold text-white md:text-5xl">Ready to get started?</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-white/80">
-              Tell us what needs to be hauled, moved, cleaned, washed, or transported. We will
-              follow up with clear next steps.
-            </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/quotes">
-                <Button variant="gold" className="rounded-2xl px-8 py-3.5">
-                  Go to Quotes
-                </Button>
-              </Link>
-              <Link href="tel:18329604471">
-                <Button
-                  variant="secondary"
-                  className="rounded-2xl border-white/40 bg-white/10 px-8 py-3.5 text-white hover:bg-white/15"
+      {/* CTA banner */}
+      <section className="section-pad bg-enterprise-navy text-white">
+        <div className="container-enterprise">
+          <div className="grid gap-12 border-t border-white/15 pt-14 xl:grid-cols-[1.1fr_0.9fr] xl:items-end xl:gap-20">
+            <div>
+              <p className="eyebrow eyebrow-light mb-6">Next Step</p>
+              <h2 className="heading-display text-white">Ready to get it handled?</h2>
+            </div>
+            <div>
+              <p className="text-base leading-[1.75] text-white/70">
+                Tell us what needs to be hauled, moved, cleaned, washed, or transported. We will
+                follow up with clear timing, pricing, and next steps.
+              </p>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/quotes"
+                  className="inline-flex items-center justify-center rounded-sharp bg-enterprise-gold px-9 py-4 text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-enterprise-navy transition-colors hover:bg-[#ffe39a]"
                 >
-                  Call (832) 960-4471
-                </Button>
-              </Link>
+                  Request A Quote
+                </Link>
+                <Link
+                  href="tel:18329604471"
+                  className="hidden items-center justify-center rounded-sharp border border-white/45 px-9 py-4 text-[0.8125rem] font-bold uppercase tracking-[0.14em] text-white transition-colors hover:border-white hover:bg-white/10 md:inline-flex"
+                >
+                  Call 832-960-4471
+                </Link>
+              </div>
             </div>
           </div>
         </div>
