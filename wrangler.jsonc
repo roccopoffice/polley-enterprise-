@@ -3,9 +3,9 @@
   "name": "polley-enterprise",
   "main": "worker/index.ts",
   "compatibility_date": "2026-06-01",
-  // Roccop.office@gmail.com. Pinned so a deploy fails outright if the wrong
-  // Cloudflare account is signed in, rather than publishing somewhere else.
-  "account_id": "be9b2293db70067c6cfec51ecca80cc7",
+  // The Polley Enterprise account. Pinned so a deploy fails outright if a
+  // different Cloudflare account is signed in, rather than publishing there.
+  "account_id": "1f4b8a60146a3506526639512a6b0f05",
   "assets": {
     // Built by `npm run build` (Next.js static export).
     "directory": "./out",
@@ -16,7 +16,7 @@
     {
       "binding": "DB",
       "database_name": "polley-enterprise",
-      "database_id": "813207c5-1d83-42c8-8b9f-326110fc6bfd"
+      "database_id": "49473a60-7960-4d4d-8f74-173fd71eb513"
     }
   ],
   "vars": {

@@ -4,7 +4,7 @@ Next.js 15 App Router site plus a fleet tracking backend for Polley Enterprise, 
 Houston, TX transportation and service company. Everything runs on Cloudflare: one
 Worker serves the site, the API, and the database.
 
-**Live:** https://polley-enterprise.roccop-office.workers.dev
+**Live:** https://polley-enterprise.polley-enterprise.workers.dev
 
 ## Stack
 
@@ -59,8 +59,9 @@ The Cloudflare side is done and live:
 
 | Item | Value |
 | --- | --- |
+| Cloudflare account | Polley Enterprise (`1f4b8a60146a3506526639512a6b0f05`) |
 | Worker | `polley-enterprise` |
-| D1 database | `polley-enterprise` (`813207c5-1d83-42c8-8b9f-326110fc6bfd`) |
+| D1 database | `polley-enterprise` (`49473a60-7960-4d4d-8f74-173fd71eb513`) |
 | Tables | users, sessions, login_attempts, counters, shipments, shipment_events, shift_sessions, location_pings, quote_requests |
 | Owner login | `owner@polleyenterprise.com` (admin) |
 
@@ -90,8 +91,8 @@ Leave `--password` off and a strong one is generated and printed once. Roles are
 | `npm run api:test` | Runs 46 end-to-end checks against `npm run cf:dev`. |
 
 `npm run api:test` also accepts a URL, for example
-`npm run api:test -- https://polley-enterprise.roccop-office.workers.dev`. Against a
-live site it runs only the checks that do not need test accounts.
+`npm run api:test -- https://polley-enterprise.polley-enterprise.workers.dev`. Against
+a live site it runs only the checks that do not need test accounts.
 
 ## How It Works
 
