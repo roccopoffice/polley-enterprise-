@@ -3,6 +3,9 @@
   "name": "polley-enterprise",
   "main": "worker/index.ts",
   "compatibility_date": "2026-06-01",
+  // Roccop.office@gmail.com. Pinned so a deploy fails outright if the wrong
+  // Cloudflare account is signed in, rather than publishing somewhere else.
+  "account_id": "be9b2293db70067c6cfec51ecca80cc7",
   "assets": {
     // Built by `npm run build` (Next.js static export).
     "directory": "./out",
