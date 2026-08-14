@@ -49,7 +49,7 @@ export async function emailQuoteNotice(env: Env, notice: QuoteNotice) {
     return;
   }
 
-  const to = env.NOTIFY_EMAIL || "petrucking96@gmail.com";
+  const to = env.NOTIFY_EMAIL || "roccop.office@gmail.com";
   const from = env.NOTIFY_FROM;
   if (!from) {
     console.warn("NOTIFY_FROM is not set; add a Cloudflare Email domain, then set quotes@yourdomain.com.");

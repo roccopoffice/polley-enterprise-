@@ -22,13 +22,13 @@
   "send_email": [
     {
       "name": "EMAIL",
-      "destination_address": "petrucking96@gmail.com",
+      "destination_address": "roccop.office@gmail.com",
       "allowed_sender_addresses": ["quotes@polleyenterprise.com"]
     }
   ],
   "vars": {
     "SESSION_HOURS": "12",
-    "NOTIFY_EMAIL": "petrucking96@gmail.com",
+    "NOTIFY_EMAIL": "roccop.office@gmail.com",
     "NOTIFY_FROM": "quotes@polleyenterprise.com"
   },
   "routes": [

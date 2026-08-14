@@ -147,7 +147,7 @@ Customers and staff hit the same Worker:
 4. The driver opens the phone app, taps `Start Shift`, and the customer sees status
    and position updates.
 5. Website form submissions land in the dashboard's quote inbox and are emailed
-   through Cloudflare Email Service to `petrucking96@gmail.com`. Reply to that
+   through Cloudflare Email Service to `roccop.office@gmail.com`. Reply to that
    email to reach the customer.
 
 The dashboard and tracking page refresh themselves on a timer, so a status change
@@ -186,7 +186,7 @@ shipment, tap `Start Shift`, and send GPS updates while the app is open.
 
 - Forms post to `/api/quotes` and are stored in D1. Real submissions are also
   emailed with Cloudflare Email Service to `NOTIFY_EMAIL`
-  (`petrucking96@gmail.com`). The sender is `quotes@polleyenterprise.com` on the
+  (`roccop.office@gmail.com`). The sender is `quotes@polleyenterprise.com` on the
   domain in this Cloudflare account.
 - "Upload" fields capture file names as submitted text context; binary file
   storage is not configured.
