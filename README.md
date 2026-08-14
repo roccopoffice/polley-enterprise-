@@ -4,7 +4,7 @@ Next.js 15 App Router site plus a fleet tracking backend for Polley Enterprise, 
 Houston, TX transportation and service company. Everything runs on Cloudflare: one
 Worker serves the site, the API, and the database.
 
-**Live:** https://polley-enterprise.polley-enterprise.workers.dev
+**Live:** https://polleyenterprise.com
 
 ## Stack
 
@@ -186,9 +186,8 @@ shipment, tap `Start Shift`, and send GPS updates while the app is open.
 
 - Forms post to `/api/quotes` and are stored in D1. Real submissions are also
   emailed with Cloudflare Email Service to `NOTIFY_EMAIL`
-  (`petrucking96@gmail.com`). The sender is `quotes@polleyenterprice.com` on the
-  domain in this Cloudflare account. That Gmail address must be a verified Email
-  Routing destination. Reply-To is the customer's address when they left one.
+  (`petrucking96@gmail.com`). The sender is `quotes@polleyenterprise.com` on the
+  domain in this Cloudflare account.
 - "Upload" fields capture file names as submitted text context; binary file
   storage is not configured.
 - Database schema and demo data live in `db/`, the API in `worker/`, and setup

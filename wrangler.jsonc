@@ -23,14 +23,19 @@
     {
       "name": "EMAIL",
       "destination_address": "petrucking96@gmail.com",
-      "allowed_sender_addresses": ["quotes@polleyenterprice.com"]
+      "allowed_sender_addresses": ["quotes@polleyenterprise.com"]
     }
   ],
   "vars": {
     "SESSION_HOURS": "12",
     "NOTIFY_EMAIL": "petrucking96@gmail.com",
-    "NOTIFY_FROM": "quotes@polleyenterprice.com"
+    "NOTIFY_FROM": "quotes@polleyenterprise.com"
   },
+  "routes": [
+    { "pattern": "polleyenterprise.com/*", "zone_name": "polleyenterprise.com" },
+    { "pattern": "www.polleyenterprise.com/*", "zone_name": "polleyenterprise.com" }
+  ],
+  "workers_dev": true,
   "observability": {
     "enabled": true
   }
