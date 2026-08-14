@@ -1,14 +1,16 @@
 export interface Env {
   DB: D1Database;
   ASSETS: Fetcher;
+  EMAIL?: SendEmail;
   /** Session lifetime in hours. Defaults to 12 (one shift). */
   SESSION_HOURS?: string;
   /** Inbox that receives website form submissions. */
   NOTIFY_EMAIL?: string;
-  /** Resend "from" address. Defaults to Resend's onboarding sender. */
+  /**
+   * Must be an address on a domain onboarded to Cloudflare Email Service,
+   * for example quotes@yourdomain.com.
+   */
   NOTIFY_FROM?: string;
-  /** Server-only Resend API key, set with `wrangler secret put`. */
-  RESEND_API_KEY?: string;
 }
 
 export type Role = "admin" | "dispatcher" | "employee";

@@ -42,14 +42,20 @@ function row(label: string, value: string | null) {
 }
 
 export async function emailQuoteNotice(env: Env, notice: QuoteNotice) {
-  const apiKey = env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.warn("RESEND_API_KEY is not set; the request was saved but not emailed.");
+  if (notice.fullName.startsWith("API Test")) return;
+
+  if (!env.EMAIL) {
+    console.warn("EMAIL binding is missing; the request was saved but not emailed.");
     return;
   }
 
   const to = env.NOTIFY_EMAIL || "petrucking96@gmail.com";
-  const from = env.NOTIFY_FROM || "Polley Enterprise <beth.t@example.com>";
+  const from = env.NOTIFY_FROM;
+  if (!from) {
+    console.warn("NOTIFY_FROM is not set; add a Cloudflare Email domain, then set quotes@yourdomain.com.");
+    return;
+  }
+
   const subject = `New ${formLabel(notice.form)} from ${notice.fullName}`;
 
   const extraText = Object.entries(notice.extra)
@@ -94,24 +100,12 @@ export async function emailQuoteNotice(env: Env, notice: QuoteNotice) {
     </div>
   `;
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${apiKey}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to: [to],
-      ...(notice.email ? { reply_to: notice.email } : {}),
-      subject,
-      text,
-      html,
-    }),
+  await env.EMAIL.send({
+    to,
+    from,
+    subject,
+    text,
+    html,
+    ...(notice.email ? { replyTo: notice.email } : {}),
   });
-
-  if (!response.ok) {
-    const body = await response.text();
-    console.error(`Quote email failed (${response.status}): ${body.slice(0, 500)}`);
-  }
 }

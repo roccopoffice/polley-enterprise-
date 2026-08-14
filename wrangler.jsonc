@@ -19,6 +19,12 @@
       "database_id": "49473a60-7960-4d4d-8f74-173fd71eb513"
     }
   ],
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "destination_address": "petrucking96@gmail.com"
+    }
+  ],
   "vars": {
     "SESSION_HOURS": "12",
     "NOTIFY_EMAIL": "petrucking96@gmail.com"
