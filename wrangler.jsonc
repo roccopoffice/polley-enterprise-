@@ -33,7 +33,9 @@
   },
   "routes": [
     { "pattern": "polleyenterprise.com/*", "zone_name": "polleyenterprise.com" },
-    { "pattern": "www.polleyenterprise.com/*", "zone_name": "polleyenterprise.com" }
+    { "pattern": "www.polleyenterprise.com/*", "zone_name": "polleyenterprise.com" },
+    { "pattern": "polleyenterpriseogs.com/*", "zone_name": "polleyenterpriseogs.com" },
+    { "pattern": "www.polleyenterpriseogs.com/*", "zone_name": "polleyenterpriseogs.com" }
   ],
   "workers_dev": true,
   "observability": {
