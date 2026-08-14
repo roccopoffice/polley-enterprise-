@@ -186,11 +186,9 @@ shipment, tap `Start Shift`, and send GPS updates while the app is open.
 
 - Forms post to `/api/quotes` and are stored in D1. Real submissions are also
   emailed with Cloudflare Email Service to `NOTIFY_EMAIL`
-  (`petrucking96@gmail.com`). The sender (`NOTIFY_FROM`) must be an address on a
-  domain in this Cloudflare account with Email Routing enabled, and that Gmail
-  address must be a verified destination. Reply-To is the customer's address
-  when they left one. Honeypot and too-fast submissions are dropped and not
-  emailed.
+  (`petrucking96@gmail.com`). The sender is `quotes@polleyenterprice.com` on the
+  domain in this Cloudflare account. That Gmail address must be a verified Email
+  Routing destination. Reply-To is the customer's address when they left one.
 - "Upload" fields capture file names as submitted text context; binary file
   storage is not configured.
 - Database schema and demo data live in `db/`, the API in `worker/`, and setup
