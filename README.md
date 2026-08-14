@@ -146,7 +146,8 @@ Customers and staff hit the same Worker:
 3. Give the customer that number for `/track`.
 4. The driver opens the phone app, taps `Start Shift`, and the customer sees status
    and position updates.
-5. Website form submissions land in the dashboard's quote inbox.
+5. Website form submissions land in the dashboard's quote inbox and are emailed
+   to `petrucking96@gmail.com`. Reply to that email to reach the customer.
 
 The dashboard and tracking page refresh themselves on a timer, so a status change
 shows up without anyone reloading.
@@ -182,8 +183,11 @@ shipment, tap `Start Shift`, and send GPS updates while the app is open.
 
 ## Notes
 
-- Forms post to `/api/quotes` and are stored in D1. They carry a honeypot field
-  (`companyWebsite`) and a timing check, so obvious bot traffic is dropped.
+- Forms post to `/api/quotes` and are stored in D1. Real submissions are also
+  emailed to `NOTIFY_EMAIL` (`petrucking96@gmail.com`) via Resend. Set the key
+  with `npx wrangler secret put RESEND_API_KEY` — never commit it. Reply-To is
+  the customer's address when they left one. Honeypot and too-fast submissions
+  are dropped and not emailed.
 - "Upload" fields capture file names as submitted text context; binary file
   storage is not configured.
 - Database schema and demo data live in `db/`, the API in `worker/`, and setup

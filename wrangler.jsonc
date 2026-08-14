@@ -20,7 +20,8 @@
     }
   ],
   "vars": {
-    "SESSION_HOURS": "12"
+    "SESSION_HOURS": "12",
+    "NOTIFY_EMAIL": "petrucking96@gmail.com"
   },
   "observability": {
     "enabled": true

@@ -27,7 +27,7 @@ const CORS_HEADERS = {
   "access-control-max-age": "86400",
 };
 
-async function handleApi(request: Request, env: Env, url: URL): Promise<Response> {
+async function handleApi(request: Request, env: Env, url: URL, ctx: ExecutionContext): Promise<Response> {
   const method = request.method.toUpperCase();
   const segments = url.pathname.replace(/^\/api\/?/, "").replace(/\/$/, "").split("/").filter(Boolean);
   const [resource, second, third, fourth] = segments;
@@ -42,7 +42,7 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
   }
 
   if (resource === "quotes" && method === "POST") {
-    return submitQuote(request, env);
+    return submitQuote(request, env, ctx);
   }
 
   if (resource === "auth" && second === "login" && method === "POST") {
@@ -93,7 +93,7 @@ async function handleApi(request: Request, env: Env, url: URL): Promise<Response
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     if (!url.pathname.startsWith("/api/")) {
@@ -106,7 +106,7 @@ export default {
 
     let response: Response;
     try {
-      response = await handleApi(request, env, url);
+      response = await handleApi(request, env, url, ctx);
     } catch (error) {
       console.error("API error", error);
       response = fail(500, "Something went wrong on our side. Please try again.");

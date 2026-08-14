@@ -3,6 +3,12 @@ export interface Env {
   ASSETS: Fetcher;
   /** Session lifetime in hours. Defaults to 12 (one shift). */
   SESSION_HOURS?: string;
+  /** Inbox that receives website form submissions. */
+  NOTIFY_EMAIL?: string;
+  /** Resend "from" address. Defaults to Resend's onboarding sender. */
+  NOTIFY_FROM?: string;
+  /** Server-only Resend API key, set with `wrangler secret put`. */
+  RESEND_API_KEY?: string;
 }
 
 export type Role = "admin" | "dispatcher" | "employee";

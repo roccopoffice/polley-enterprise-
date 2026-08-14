@@ -1,5 +1,6 @@
 import { newId } from "../lib/crypto";
 import { badRequest, forbidden, json, notFound, optionalStr, readJson, str } from "../lib/http";
+import { emailQuoteNotice } from "../lib/notify";
 import { isDispatch, type Env, type SessionUser } from "../types";
 
 const KNOWN_FIELDS = new Set([
@@ -16,7 +17,7 @@ const KNOWN_FIELDS = new Set([
 ]);
 
 /** Public form intake. Everything a customer submits lands in the database. */
-export async function submitQuote(request: Request, env: Env) {
+export async function submitQuote(request: Request, env: Env, ctx: ExecutionContext) {
   const body = await readJson(request);
   if (!body) return badRequest();
 
@@ -65,6 +66,22 @@ export async function submitQuote(request: Request, env: Env) {
       Object.keys(extra).length > 0 ? JSON.stringify(extra) : null
     )
     .run();
+
+  ctx.waitUntil(
+    emailQuoteNotice(env, {
+      form: str(body.form, 60) || "quote",
+      fullName,
+      email,
+      phone,
+      inquiryType: optionalStr(body.inquiryType, 120),
+      location: optionalStr(body.location, 160),
+      preferredDate: optionalStr(body.preferredDate, 60),
+      details,
+      extra,
+    }).catch((error) => {
+      console.error("Quote email failed", error);
+    })
+  );
 
   return json({ ok: true }, { status: 201 });
 }
